@@ -1,7 +1,14 @@
+using MKsEMS.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRazorPages(); //for hot reloading
+
+var connectionString = builder.Configuration.GetConnectionString("EMSDbContext");
+builder.Services.AddDbContext<EMSDbContext>();
 
 var app = builder.Build();
 
