@@ -1,7 +1,11 @@
-﻿namespace MKsEMS.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MKsEMS.Models
 {
     public class LeaveType
     {
-        public int name { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public string name { get; set; }
     }
 }
