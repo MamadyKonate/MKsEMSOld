@@ -1,0 +1,16 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MKsEMS.Models
+{
+    public class Leave
+    {
+        [Key]
+        public int Id { get; set; }
+        public int userEmail { get; set; }
+        public int Allowance { get; set; }
+        public int Taken { get; set; }
+        public int LeaveTypeId { get; set; }
+        public bool LeaveStatus { get; set; }
+        public string? DenialReason { get; set; }
+    }
+}
