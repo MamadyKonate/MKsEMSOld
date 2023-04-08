@@ -5,7 +5,7 @@ namespace MKsEMS.Models
     public class Credentials
     {
         [Key]
-        int Id { get; set; }
+        public int Id { get; set; }
         public string userEmail { get; set; }
         public string encPass { get; set; }
         public string saltStart { get; set; }
