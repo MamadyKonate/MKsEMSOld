@@ -6,7 +6,9 @@ namespace MKsEMS.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public int userEmail { get; set; }
+        [Required]
         public int Allowance { get; set; }
         public int Taken { get; set; }
         public int LeaveTypeId { get; set; }
