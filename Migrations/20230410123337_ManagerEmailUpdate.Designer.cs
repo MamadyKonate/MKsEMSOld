@@ -3,6 +3,7 @@ using System;
 using MKsEMS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    partial class EMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230410123337_ManagerEmailUpdate")]
+    partial class ManagerEmailUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -150,9 +153,8 @@ namespace MKsEMS.Migrations
                     b.Property<double>("LeaveTaken")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("ManagerEmail")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ManagerEmail")
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Salary")
                         .HasColumnType("REAL");
