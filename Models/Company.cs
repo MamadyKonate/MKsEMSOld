@@ -1,14 +1,28 @@
-﻿namespace MKsEMS.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MKsEMS.Models
 {
-    public static class Company
+    public  class Company
     {
-        public static string Name { get; set; } = "MK's EMS";
-        public static string Address { get; set; } = "1234 Main St.";
-        public static string City { get; set; } = "Anytown";
-        public static string Eircode { get; set; } = "12345";
-        public static string Phone { get; set; } = "123-456-7890";
-        public static string Email { get; set; } = "company.emailc.ie";
-        public static string LogoURI { get; set; } = "";
-        public static bool IsToBeDeleted { get; set; } = false;
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        public  string Name { get; set; } = "MK's EMS";
+        [Required]
+        public  string Address1 { get; set; } = "1234 Main St.";
+        [Required]
+        public string Address2 { get; set; } = "Suite 123";
+        [Required]
+        public  string City { get; set; } = "Anytown";
+        [Required]
+        public string County { get; set; } = "Anycounty";
+        [Required]
+        public string Eircode { get; set; } = "12345";
+        [Required, Phone]
+        public string Phone { get; set; } = "123-456-7890";
+        [Required, EmailAddress]
+        public string Email { get; set; } = "company.emailc.ie";
+        public string LogoURI { get; set; } = "";
+        public bool IsToBeDeleted { get; set; } = false;
     }
 }
