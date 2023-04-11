@@ -10,11 +10,11 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class CompaniesController : Controller
+    public class CompaniesPVController : Controller
     {
         private readonly EMSDbContext _context;
 
-        public CompaniesController(EMSDbContext context)
+        public CompaniesPVController(EMSDbContext context)
         {
             _context = context;
         }
@@ -22,7 +22,10 @@ namespace MKsEMS.Controllers
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-              return _context.Companies != null ? 
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Companies'  is null.");
         }
@@ -30,6 +33,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -39,6 +45,9 @@ namespace MKsEMS.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
+                if (!GrantedAccess())
+                    return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
                 return NotFound();
             }
 
@@ -48,6 +57,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             return View();
         }
 
@@ -56,8 +68,11 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,domainName,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,Name,Email,LogoURI,IsToBeDeleted")] Company company)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (ModelState.IsValid)
             {
                 _context.Add(company);
@@ -70,6 +85,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -88,8 +106,11 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,domainName,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,LogoURI,IsToBeDeleted")] Company company)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id != company.Id)
             {
                 return NotFound();
@@ -121,6 +142,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -136,11 +160,20 @@ namespace MKsEMS.Controllers
             return View(company);
         }
 
-        // POST: Companies/Delete/5
+        /// <summary>
+        /// This method is called when the user clicks on the Delete button on Company.
+        /// As this is an important account, it has to be confirmed twice.
+        /// It's only deleted after the second delete, otherwise it's marked as deleted, but not actually deleted.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (_context.Companies == null)
             {
                 return Problem("Entity set 'EMSDbContext.Companies'  is null.");
@@ -148,11 +181,32 @@ namespace MKsEMS.Controllers
             var company = await _context.Companies.FindAsync(id);
             if (company != null)
             {
-                _context.Companies.Remove(company);
+                if (company.IsToBeDeleted)
+                {
+                    _context.Companies.Remove(company);
+                }
+                else
+                {
+                    company.IsToBeDeleted = true;
+                }
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// Checks if the current user should have access to Company details
+        /// Only CEO and Admins should have access
+        /// </summary>
+        /// <returns></returns>
+        private bool GrantedAccess()
+        {
+            if (!CurrentUser.IsLoggedIn()
+                && (!CurrentUser.GetLoggedInUser.IsCEO || !CurrentUser.GetLoggedInUser.IsAdmin))
+                return false;
+
+            return true;
         }
 
         private bool CompanyExists(int id)
