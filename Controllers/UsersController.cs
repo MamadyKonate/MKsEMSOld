@@ -15,6 +15,7 @@ namespace MKsEMS.Controllers
     {
         private readonly EMSDbContext _context;
         private readonly EMSDbContext _contextCredentails;
+        private readonly Credentials _credentials = new();
         public UsersController(EMSDbContext context)
         {
             _context = context;
@@ -73,14 +74,14 @@ namespace MKsEMS.Controllers
             if (ModelState.IsValid)
             {
                 //Adding/creating email and temporary password into Credentials table for the user 
-                Credentials credentials = new ();
-                credentials.UserEmail = user.Email;
+                
+                _credentials.UserEmail = user.Email;
                 string pass = GenerateRandomPass.GeTempPassword();
 
                      
-                credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
+                _credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
                 
-                await _context.AddAsync(credentials);
+                await _context.AddAsync(_credentials);
                 _context.SaveChangesAsync();
 
                 //now creating a record in Users table for the user

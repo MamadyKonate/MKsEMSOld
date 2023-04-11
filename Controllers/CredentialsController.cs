@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using MKsEMS.Services;
 
 namespace MKsEMS.Controllers
 {
@@ -117,6 +118,23 @@ namespace MKsEMS.Controllers
             }
             return View(credentials);
         }
+
+        public async Task<IActionResult> UpdateCredentials(Credentials userCredentials)
+        {
+
+            _context.Credentials.Where(uc => uc.UserEmail == userCredentials.Email).FirstOrDefaultAsync();
+            string pass = GenerateRandomPass.GeTempPassword();
+
+
+            _credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
+
+            await _context.AddAsync(_credentials);
+            _context.SaveChangesAsync();
+
+            return View(userCredentials);
+
+        }
+
 
         // GET: Credentials/Delete/5
         public async Task<IActionResult> Delete(int? id)
