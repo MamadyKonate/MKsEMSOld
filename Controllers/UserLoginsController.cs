@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using MKsEMS.Services;
 
 namespace MKsEMS.Controllers
 {
@@ -54,35 +55,45 @@ namespace MKsEMS.Controllers
             if (ModelState.IsValid)
             {
                 TempData["Message"] = "";
-              
-                var userLogin = _context.Credentials.Where(
-                    u => u.UserEmail == user.Email && u.EncPass == user.Password).FirstOrDefault();
 
-                if (userLogin != null)  //we have our user
+                //Getting account with matching email first
+                var userCredentials = (_context.Credentials.Where(
+                    uc => uc.UserEmail == user.Email)).FirstOrDefault();
+
+                if (userCredentials != null)  //we have our user
                 {
-                    var theUser = _context.Users.Where(us => us.Email == userLogin.UserEmail).FirstOrDefault();
+                    //Now we decode userCredentials's password on the system
+                    var pass = EncDecPassword.DecodeFrom64(userCredentials.EncPass);
 
-                    theUser.IsUserLoggedIn = true;
-
-                    CurrentUser.GetLoggedInUser = theUser;
-                    _incorrectPasswordEntered = 0;
-
-                    //                 ViewModelData.GetFilteredUsers = ViewModelData.GetUsers();
-
-                    if (theUser.IsAdmin || theUser.IsManager)
+                    //then we compare the passwords
+                    if (pass == user.Password)
                     {
-                        return RedirectToAction("index", "Users");
+                        //we then configure the logged-in user accordingly
+                        var theUser = (_context.Users.Where(us => us.Email == userCredentials.UserEmail)).FirstOrDefault();
+
+                        theUser.IsUserLoggedIn = true;
+
+                        CurrentUser.GetLoggedInUser = theUser;
+                        _incorrectPasswordEntered = 0;
+
+                        //ViewModelData.GetFilteredUsers = ViewModelData.GetUsers();
+
+                        if (theUser.IsAdmin || theUser.IsManager)
+                        {
+                            return RedirectToAction("index", "Users");
+                        }
+                        else
+                        {
+                            return RedirectToAction("index", "Leaves");
+                        }
                     }
-                    else 
+                    else
                     {
-                        return RedirectToAction("index", "Leaves");
+                        CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
+                        TempData["Message"] = "Incorrect Username or Password entered " + (_incorrectPasswordEntered += 1) + " time(s).";
+                        return View();
                     }
-                }
-                else
-                {
-                    CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
-                    TempData["Message"] = "Incorrect Username or Password entered " + (_incorrectPasswordEntered += 1) + " time(s).";
-                    return View();
+
                 }
             }
 

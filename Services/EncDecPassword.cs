@@ -1,4 +1,5 @@
 ﻿using MKsEMS.Data;
+using SQLitePCL;
 using System.Linq;
 using System.Text;
 namespace MKsEMS.Services
@@ -7,18 +8,19 @@ namespace MKsEMS.Services
     { 
         //this function Convert to Encord your Password
         public static string Enc64bitsPass(string password)
-        {
+        {            
             try
             {
+                password = "Lamine";
+
                 string saltStart = AddSaltStart(), saltEnd = AddSaltEnd();
 
                 password = string.Concat(saltStart, password, saltEnd);
-
+                
                 byte[] encodeData = new byte[password.Length];
-                encodeData = Encoding.UTF8.GetBytes(password);
+                encodeData = Encoding.UTF8.GetBytes(password);                
 
                 string encPassword = Convert.ToBase64String(encodeData);
-                
                 return string.Concat(saltStart.Length, encPassword, saltEnd.Length);
             }
             catch (Exception e)
@@ -27,21 +29,34 @@ namespace MKsEMS.Services
             }
         }
 
-
         //this function Convert to Decord your Password
         public static string DecodeFrom64(string encryptedPass)
-        {
-            
+        {              
+             //extracting the lengh of added salts
+            int saltStartLeng = int.Parse(encryptedPass.Substring(0, 2));
+            int saltEndLeng = int.Parse(encryptedPass.Substring(encryptedPass.Length -2));
+
+            //we then remove the overheads saltStartLeng, and saltEndLeng from the encryptedPass
+            encryptedPass = encryptedPass.Substring(2);
+            encryptedPass = encryptedPass.Substring(0, encryptedPass.Length - 2);
+
+            byte[] toDecodeByte = Convert.FromBase64String(encryptedPass);
+
             UTF8Encoding encoder = new();
             Decoder utf8Decode = encoder.GetDecoder();
             byte[] passToDecrypt = Convert.FromBase64String(encryptedPass);
             int charCount = utf8Decode.GetCharCount(passToDecrypt, 0, passToDecrypt.Length);
             char[] decryptedChars = new char[charCount];
             utf8Decode.GetChars(passToDecrypt, 0, passToDecrypt.Length, decryptedChars, 0);
-            string decPassword = new String(decryptedChars);
+            
+            string decPassword = new String(decryptedChars);           
+
+            //stripping away all remaing overheads
+            decPassword = decPassword.Substring(saltStartLeng);
+            decPassword = decPassword.Substring(0, decPassword.Length - saltEndLeng);
+        
             return decPassword;
         }
-
         public static string AddSaltEnd()
         {
             Dictionary<int, string> saltEndDict = new();
@@ -75,7 +90,6 @@ namespace MKsEMS.Services
 
             return String.Concat(saltEnd);
         }
-
         public static string AddSaltStart()
         {
             Dictionary<int, string> saltStartDict = new();
@@ -105,15 +119,7 @@ namespace MKsEMS.Services
             }           
 
             return String.Concat(saltStart);
-        }
-
-        public static string RemoveSalt(string password)
-        {
-            Dictionary<string, string> alphaLower = new();
-            Dictionary<string, string> alphaUpper = new();
-
-            return password;
-        }
+        }        
 
     }
 }
