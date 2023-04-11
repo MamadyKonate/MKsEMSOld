@@ -100,19 +100,11 @@ namespace MKsEMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("encPass")
+                    b.Property<string>("EncPass")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("saltEnd")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("saltStart")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("userEmail")
+                    b.Property<string>("UserEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -191,6 +183,15 @@ namespace MKsEMS.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCEO")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsManager")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsUserLoggedIn")
                         .HasColumnType("INTEGER");
 
@@ -226,6 +227,25 @@ namespace MKsEMS.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("MKsEMS.Models.UserLogin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLogin");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.Administraor", b =>

@@ -28,6 +28,8 @@ namespace MKsEMS.Models
         [Required]
         public double Salary { get; set; }
         public bool IsUserLoggedIn { get; set; }
-
+        public bool IsAdmin { get; set; }
+        public bool IsManager { get; set; }
+        public bool IsCEO { get; set; }
     }
 }

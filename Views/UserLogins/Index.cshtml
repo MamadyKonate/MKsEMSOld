@@ -1,0 +1,45 @@
+﻿@model MKsEMS.Models.UserLogin
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="col-12 w-50 position-absolute top-50 start-50 translate-middle">
+
+    <div class="mb-5">
+        <h1>Welcome to [INSERT COMPANY NAME HERE].</h1>
+    </div>
+
+    @{
+        ViewData["Title"] = "Login Page";
+
+        if (TempData["Message"] != null)
+        {
+            <label style="color:rebeccapurple" class="mb-5"><H4>@TempData["Message"]</H4></label>
+        }
+    }
+
+
+    <div class="mt-5">
+        <form asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-5">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

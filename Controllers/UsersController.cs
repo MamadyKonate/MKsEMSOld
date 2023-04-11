@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using MKsEMS.Services;
 
 namespace MKsEMS.Controllers
 {
     public class UsersController : Controller
     {
         private readonly EMSDbContext _context;
-
+        private readonly EMSDbContext _contextCredentails;
         public UsersController(EMSDbContext context)
         {
             _context = context;
+           // _contextCredentails = _cont;
         }
 
         // GET: Users
@@ -60,12 +62,27 @@ namespace MKsEMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                //Adding/creating email and temporary password into Credentials table for the user 
+                Credentials credentials = new ();
+                credentials.UserEmail = user.Email;
+                string pass = GenerateRandomPass.GeTempPassword();
+
+                     
+                credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
+                
+                await _context.AddAsync(credentials);
+                _context.SaveChangesAsync();
+
+                //now creating a record in Users table for the user
+                _context.Add(user);                
                 await _context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
         }
+
+        
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)

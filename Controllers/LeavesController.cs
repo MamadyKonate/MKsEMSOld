@@ -56,7 +56,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,userEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,userEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
         {
             if (id != leave.Id)
             {

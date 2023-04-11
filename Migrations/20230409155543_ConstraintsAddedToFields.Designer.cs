@@ -53,19 +53,19 @@ namespace MKsEMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("encPass")
+                    b.Property<string>("EncPass")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("saltEnd")
+                    b.Property<string>("SaltEnd")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("saltStart")
+                    b.Property<string>("SaltStart")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("userEmail")
+                    b.Property<string>("UserEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -95,7 +95,7 @@ namespace MKsEMS.Migrations
                     b.Property<int>("Taken")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("userEmail")
+                    b.Property<int>("UserEmail")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
