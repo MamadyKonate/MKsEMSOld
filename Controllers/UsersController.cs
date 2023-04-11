@@ -87,6 +87,10 @@ namespace MKsEMS.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -138,6 +142,10 @@ namespace MKsEMS.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -163,10 +171,14 @@ namespace MKsEMS.Controllers
                 return Problem("Entity set 'EMSDbContext.Users'  is null.");
             }
             var user = await _context.Users.FindAsync(id);
+            var userCredentials =  _context.Credentials.Where(uc => uc.UserEmail == user.Email).FirstOrDefault();
             if (user != null)
             {
                 _context.Users.Remove(user);
-            }
+                
+                if(userCredentials !=null)
+                    _context.Credentials.Remove(userCredentials);
+            }   
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
