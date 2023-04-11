@@ -24,7 +24,10 @@ namespace MKsEMS.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-              return _context.Users != null ? 
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            return _context.Users != null ? 
                           View(await _context.Users.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Users'  is null.");
         }
@@ -32,6 +35,10 @@ namespace MKsEMS.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -50,6 +57,9 @@ namespace MKsEMS.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             return View();
         }
 

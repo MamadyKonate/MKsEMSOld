@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
@@ -22,7 +17,10 @@ namespace MKsEMS.Controllers
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-              return _context.Companies != null ? 
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Companies'  is null.");
         }
@@ -30,6 +28,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -48,6 +49,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             return View();
         }
 
@@ -58,6 +62,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Address1,Address2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (ModelState.IsValid)
             {
                 _context.Add(company);
@@ -70,6 +77,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -90,6 +100,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address1,Address2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id != company.Id)
             {
                 return NotFound();
@@ -121,6 +134,9 @@ namespace MKsEMS.Controllers
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Companies == null)
             {
                 return NotFound();
@@ -141,6 +157,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!GrantedAccess())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (_context.Companies == null)
             {
                 return Problem("Entity set 'EMSDbContext.Companies'  is null.");
@@ -158,6 +177,19 @@ namespace MKsEMS.Controllers
         private bool CompanyExists(int id)
         {
           return (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        /// <summary>
+        /// Checks if the current user should have access to Company details
+        /// Only CEO and Admins should have access
+        /// </summary>
+        /// <returns></returns>
+        private bool GrantedAccess()
+        {
+            if (!CurrentUser.IsLoggedIn()
+                && (!CurrentUser.GetLoggedInUser.IsCEO || !CurrentUser.GetLoggedInUser.IsAdmin))
+                return false;
+            
+            return true;
         }
     }
 }
