@@ -25,5 +25,6 @@ namespace MKsEMS.Data
         public DbSet<Administraor> Administraors { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; } 
+        public DbSet<MKsEMS.Models.UserLogin> UserLogin { get; set; } = default!;
     }
 }

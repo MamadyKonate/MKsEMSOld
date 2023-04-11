@@ -1,12 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class Utilities : Controller
+    public static class CurrentUser
     {
-        public IActionResult Index()
+        public static User GetLoggedInUser { get; set; } = new();
+
+        /// <summary>
+        /// Returns true if a user is logged in.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsLoggedIn()
         {
-            return View();
+            if (GetLoggedInUser.IsUserLoggedIn)
+                return true;
+
+            return false;
         }
     }
 }

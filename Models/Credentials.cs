@@ -7,12 +7,16 @@ namespace MKsEMS.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string userEmail { get; set; }
+        public string UserEmail { get; set; }
         [Required]
-        public string encPass { get; set; }
-        [Required]
-        public string saltStart { get; set; }
-        [Required]
-        public string saltEnd { get; set; }
+        public string EncPass { get; set; }
+        //[Required]
+        //public string SaltStart { get; set; }
+        //[Required]
+        //public string SaltEnd { get; set; }
+        //[Required, MaxLength(2)]
+        //public int Start { get; set; }
+        //[Required, MaxLength(2)]
+        //public int End { get; set; }
     }
 }

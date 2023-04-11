@@ -56,7 +56,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,userEmail,encPass,saltStart,saltEnd")] Credentials credentials)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,EncPass,SaltStart,SaltEnd")] Credentials credentials)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,userEmail,encPass,saltStart,saltEnd")] Credentials credentials)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,EncPass,SaltStart,SaltEnd")] Credentials credentials)
         {
             if (id != credentials.Id)
             {
