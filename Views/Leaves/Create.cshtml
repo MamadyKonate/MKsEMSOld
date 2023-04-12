@@ -1,4 +1,5 @@
 ﻿@model MKsEMS.Models.Leave
+@using MKsEMS.Controllers
 
 @{
     ViewData["Title"] = "Create";
@@ -12,11 +13,30 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            @{
+                if (!CurrentUser.GetLoggedInUser.IsAdmin)
+                {
+                    <label asp-for="UserEmail" class="control-label">Your email </label>
+                    <input type="text" name="UserEmail" value="@CurrentUser.GetLoggedInUser.Email" readonly>
+
+                    <br>
+                }
+                else
+                {
+                    <label asp-for="UserEmail" class="control-label">User Email </label>
+                    @Html.DropDownList("UserEmail",ViewModelData.GetUsersEmailsSelectList(),"Select",new {@class = "form-control"})
+                    //<input asp-for="UserEmail" class="form-control" />
+                }
+            }
+
+           
+@*
             <div class="form-group">
                 <label asp-for="UserEmail" class="control-label"></label>
                 <input asp-for="UserEmail" class="form-control" />
                 <span asp-validation-for="UserEmail" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Allowance" class="control-label"></label>
                 <input asp-for="Allowance" class="form-control" />
@@ -27,17 +47,17 @@
                 <input asp-for="Taken" class="form-control" />
                 <span asp-validation-for="Taken" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden>
                 <label asp-for="LeaveTypeId" class="control-label"></label>
                 <input asp-for="LeaveTypeId" class="form-control" />
                 <span asp-validation-for="LeaveTypeId" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
+            <div class="form-group form-check" hidden>
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="LeaveStatus" /> @Html.DisplayNameFor(model => model.LeaveStatus)
                 </label>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden>
                 <label asp-for="DenialReason" class="control-label"></label>
                 <input asp-for="DenialReason" class="form-control" />
                 <span asp-validation-for="DenialReason" class="text-danger"></span>
