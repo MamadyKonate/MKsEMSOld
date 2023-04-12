@@ -17,10 +17,10 @@
             @Html.DisplayFor(model => model.FirstName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SurName)
+            @Html.DisplayNameFor(model => model.Surname)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SurName)
+            @Html.DisplayFor(model => model.Surname)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
@@ -39,7 +39,7 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ManagerEmail)
-        </dd>        
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DOB)
         </dt>
@@ -69,6 +69,30 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Salary)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsUserLoggedIn)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsUserLoggedIn)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsAdmin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsAdmin)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsManager)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsManager)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsCEO)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsCEO)
         </dd>
     </dl>
 </div>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MKsEMS.Data;
 using MKsEMS.Models;
 using MKsEMS.Services;
@@ -14,18 +15,28 @@ namespace MKsEMS.Controllers
     public class UsersController : Controller
     {
         private readonly EMSDbContext _context;
-        private readonly EMSDbContext _contextCredentails;
+        private Credentials _credentials = new();
+        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
+        
         public UsersController(EMSDbContext context)
         {
-            _context = context;
-           // _contextCredentails = _cont;
+            _context = context;         
         }
 
         // GET: Users
+        /// <summary>
+        /// Getting Users for Administrators, Managers and CEO only
+        /// </summary>
+        /// <returns>List of Users</returns>
         public async Task<IActionResult> Index()
         {
             if (!CurrentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                        
+            if(!_loggedInUser.IsAdmin ||
+               !_loggedInUser.IsManager ||
+               !_loggedInUser.IsCEO)
+                return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
 
             return _context.Users != null ? 
                           View(await _context.Users.ToListAsync()) :
@@ -33,12 +44,12 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Users/Details/5
+        //Any logged in user should be able to get at least his/her own detail
         public async Task<IActionResult> Details(int? id)
         {
             if (!CurrentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
-
-            
+                        
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -55,10 +66,19 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Users/Create
+        /// <summary>
+        /// Only Administrators are allowed to create User account
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
+            TempData["AdminMessage"] = "";
+
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
 
             return View();
         }
@@ -68,26 +88,26 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,SurName,Email,Title,ManagerEmail,Department,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Email,Title,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
         {
+            TempData["AdminMessage"] = "";
+
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (ModelState.IsValid)
             {
-
                 //creating email address for the user
                  SetEmail(user);
-
-//                if (_context.Companies.First().domainName != null)
- //                   user.Email = string.Concat(user.FirstName, ".", user.SurName, "@", _context.Companies.First().domainName);
-                
+        
                 //Adding/creating email and temporary password into Credentials table for the user                 
-                _credentials.UserEmail = user.Email;
-
-                string pass = GenerateRandomPass.GeTempPassword();
-
-                     
-                credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
+                _credentials.UserEmail = user.Email;                     
+                _credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
                 
-                await _context.AddAsync(credentials);
+                await _context.AddAsync(_credentials);
                 _context.SaveChangesAsync();
 
                 //now creating a record in Users table for the user
@@ -99,26 +119,33 @@ namespace MKsEMS.Controllers
             return View(user);
         }
 
+        /// <summary>
+        /// Creating email address for the new user.
+        /// It is done based on [Firstname].[Surname]@[DomainName]
+        /// If there is another user with the same full name (same email signature),
+        /// then, a digit number is added to Surename. i.e.: joe.smith1@domain.ie
+        /// </summary>
+        /// <param name="user">The new user the email is being created for</param>
         private void SetEmail(User user)
         {
             int counter = 0;
-            string email, domainName = (_context.Companies.First().domainName);
+            string email, domainName = (_context.Companies.First().DomainName);
             bool emailSet = false;
             do
             {
                 if (counter == 0)
                 {
-                    email = string.Concat(user.FirstName, ".", user.SurName, "@", domainName);
+                    email = string.Concat(user.FirstName, ".", user.Surname, "@", domainName);
                 }
                 else
                 {
-                    email = string.Concat(user.FirstName, ".", user.SurName, counter, "@", domainName);
+                    email = string.Concat(user.FirstName, ".", user.Surname, counter, "@", domainName);
                 }
+                var tempUser = _context.Users.Where(u => u.Email.ToLower() == email.ToLower());
 
-                if (_context.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower()) == null)
+                if (tempUser.IsNullOrEmpty())
                     emailSet = true;
                     user.Email = email;
-
 
                 counter++;
 
@@ -128,12 +155,21 @@ namespace MKsEMS.Controllers
 
 
         // GET: Users/Edit/5
+        /// <summary>
+        /// Opening the form for editing an existing User account 
+        /// </summary>
+        /// <param name="id">Id of the selected user to edit</param>
+        /// <returns>View page of user to edit </returns>
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            TempData["AdminMessage"] = "";
 
-            
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -150,10 +186,25 @@ namespace MKsEMS.Controllers
         // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Editing the user account into the database assuming all createria are met,
+        /// otherwise a View is returned with the user information in for correction
+        /// </summary>
+        /// <param name="id">Id of the selected user</param>
+        /// <param name="user">Selected user</param>
+        /// <returns>Index page of list of users </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,SurName,Email,Title,ManagerEmail,Department,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,Title,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
         {
+            TempData["AdminMessage"] = "";
+
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id != user.Id)
             {
                 return NotFound();
@@ -183,12 +234,21 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Users/Delete/5
+        ///<summary>
+        /// Opening the form for deleting an existing User account
+        /// </summary>
+        /// <param name="id">Id of the user to be deleted</param>
+        /// <returns>User to be deleted</returns>
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            TempData["AdminMessage"] = "";
 
-            
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -205,10 +265,23 @@ namespace MKsEMS.Controllers
         }
 
         // POST: Users/Delete/5
+        /// <summary>
+        /// Deleting the user account from the database
+        /// </summary>
+        /// <param name="id">Id of the user to be deleted</param>
+        /// <returns>Redirected to list of users</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            TempData["AdminMessage"] = "";
+
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (_context.Users == null)
             {
                 return Problem("Entity set 'EMSDbContext.Users'  is null.");
@@ -225,6 +298,18 @@ namespace MKsEMS.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        
+        /// <summary>
+        /// Checking if current user is logged in and if s/he is an Administrator
+        /// </summary>
+        /// <returns>true or false</returns>
+        private bool AdminUserIsLoggedIn()
+        {
+            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+                return true;
+
+            return false;
         }
 
         private bool UserExists(int id)

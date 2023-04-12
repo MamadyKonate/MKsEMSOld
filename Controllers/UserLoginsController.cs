@@ -35,7 +35,7 @@ namespace MKsEMS.Controllers
             return View();
         }
         /// <summary>
-        /// Comparing user's credentials their conterpart on the DB
+        /// Comparing user's _credentials their conterpart on the DB
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
@@ -107,7 +107,7 @@ namespace MKsEMS.Controllers
        
         private bool UserLoginExists(int id)
         {
-            return (_context.UserLogin?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.UserLogins?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

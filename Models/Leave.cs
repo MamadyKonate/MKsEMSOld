@@ -7,7 +7,13 @@ namespace MKsEMS.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public int userEmail { get; set; }
+        public int UserEmail { get; set; }
+        [Required]
+        public int ManagerEmail { get; set; }
+        [Required, DataType(DataType.Date)]
+        public DateOnly DateFrom { get; set; }
+        [Required, DataType(DataType.Date)]
+        public DateOnly DateTo { get; set; }
         [Required]
         public int Allowance { get; set; }
         public int Taken { get; set; }

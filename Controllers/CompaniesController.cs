@@ -15,11 +15,20 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Companies
+        /// <summary>
+        /// Displaying Company details in a list
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            if (!GrantedAccess())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            TempData["AdminMessage"] = "";
 
+            if (!GrantedAccess())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
+
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
             return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Companies'  is null.");
@@ -28,6 +37,15 @@ namespace MKsEMS.Controllers
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            TempData["AdminMessage"] = "";
+
+            if (!GrantedAccess())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
+
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
@@ -47,8 +65,20 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Companies/Create
+        /// <summary>
+        /// Only Administrators can created Company
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
+            TempData["AdminMessage"] = "";
+
+            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
@@ -58,12 +88,23 @@ namespace MKsEMS.Controllers
         // POST: Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Only Administrators are allowed to creat Company
+        /// </summary>
+        /// <param name="company">Company to be created</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address1,Address2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,Name,AddressLine1,AddressLine2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
         {
-            if (!GrantedAccess())
+            TempData["AdminMessage"] = "";
+
+            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
 
             if (ModelState.IsValid)
             {
@@ -75,10 +116,21 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Companies/Edit/5
+        /// <summary>
+        ///  Only Administrators are allowed to edit Company details
+        /// </summary>
+        /// <param name="id">Id of selected Company</param>
+        /// <returns>Company View</returns>
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!GrantedAccess())
+            TempData["AdminMessage"] = "";
+
+            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
 
             if (id == null || _context.Companies == null)
             {
@@ -96,12 +148,24 @@ namespace MKsEMS.Controllers
         // POST: Companies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        ///  Only Administrators are allowed to creat Company
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="company"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address1,Address2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AddressLine1,AddressLine2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
         {
-            if (!GrantedAccess())
+            TempData["AdminMessage"] = "";
+
+            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
 
             if (id != company.Id)
             {
@@ -132,6 +196,11 @@ namespace MKsEMS.Controllers
         }
 
         // GET: Companies/Delete/5
+        /// <summary>
+        ///  Only Administrators, and the CEO are allowed to creat Company
+        /// </summary>
+        /// <param name="id">Id of the selected Company to be deleted</param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (!GrantedAccess())
@@ -153,6 +222,14 @@ namespace MKsEMS.Controllers
         }
 
         // POST: Companies/Delete/5
+        /// <summary>
+        /// Only Administrators, and the CEO are allowed to creat Company.
+        /// This is done in two folds:
+        /// 1 - Administrator deletes the Company, this only marks it as it is to be deleted
+        /// 2 - The CEO (second User) also goes through the deletion process, it then gets deleted
+        /// </summary>
+        /// <param name="id">Id of the selected Company to be deleted</param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -165,9 +242,17 @@ namespace MKsEMS.Controllers
                 return Problem("Entity set 'EMSDbContext.Companies'  is null.");
             }
             var company = await _context.Companies.FindAsync(id);
+            
             if (company != null)
             {
-                _context.Companies.Remove(company);
+                if (!company.IsToBeDeleted)
+                {
+                    company.IsToBeDeleted = true;
+                }
+                else
+                {
+                    _context.Companies.Remove(company);
+                }                
             }
             
             await _context.SaveChangesAsync();

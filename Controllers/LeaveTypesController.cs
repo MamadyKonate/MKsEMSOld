@@ -10,6 +10,10 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
+    /// <summary>
+    /// Only Administrators are allowed to perform CRUD functionalities on LeaveType objects
+    /// No further comments added to default methods in this Controller
+    /// </summary>
     public class LeaveTypesController : Controller
     {
         private readonly EMSDbContext _context;
@@ -22,6 +26,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveTypes
         public async Task<IActionResult> Index()
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+           
               return _context.LeaveTypes != null ? 
                           View(await _context.LeaveTypes.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.LeaveTypes'  is null.");
@@ -30,6 +37,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (id == null || _context.LeaveTypes == null)
             {
                 return NotFound();
@@ -48,6 +58,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveTypes/Create
         public IActionResult Create()
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             return View();
         }
 
@@ -58,6 +71,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] LeaveType leaveType)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (ModelState.IsValid)
             {
                 _context.Add(leaveType);
@@ -70,6 +86,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (id == null || _context.LeaveTypes == null)
             {
                 return NotFound();
@@ -90,6 +109,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] LeaveType leaveType)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (id != leaveType.Id)
             {
                 return NotFound();
@@ -121,6 +143,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (id == null || _context.LeaveTypes == null)
             {
                 return NotFound();
@@ -141,6 +166,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;                    
+
             if (_context.LeaveTypes == null)
             {
                 return Problem("Entity set 'EMSDbContext.LeaveTypes'  is null.");
@@ -154,6 +182,18 @@ namespace MKsEMS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        /// <summary>
+        /// Checking if logged in user is an Administrator and logged in
+        /// </summary>
+        /// <returns></returns>
+        private bool AdminUserIsLoggedIn()
+        {
+            if (CurrentUser.IsLoggedIn() && CurrentUser.GetLoggedInUser.IsAdmin)
+                return true;
+
+            return false;
+        }
+
 
         private bool LeaveTypeExists(int id)
         {

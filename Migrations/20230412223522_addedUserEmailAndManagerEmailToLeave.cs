@@ -5,30 +5,25 @@
 namespace MKsEMS.Migrations
 {
     /// <inheritdoc />
-    public partial class ManagerEmailCorrectlyUpdated : Migration
+    public partial class addedUserEmailAndManagerEmailToLeave : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
+            migrationBuilder.AddColumn<int>(
                 name: "ManagerEmail",
-                table: "Users",
-                type: "TEXT",
+                table: "Leaves",
+                type: "INTEGER",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "INTEGER");
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.DropColumn(
                 name: "ManagerEmail",
-                table: "Users",
-                type: "INTEGER",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "TEXT");
+                table: "Leaves");
         }
     }
 }
