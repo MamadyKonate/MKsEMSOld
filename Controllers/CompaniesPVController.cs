@@ -1,26 +1,31 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class CompaniesController : Controller
+    public class CompaniesPVController : Controller
     {
         private readonly EMSDbContext _context;
 
-        public CompaniesController(EMSDbContext context)
+        public CompaniesPVController(EMSDbContext context)
         {
             _context = context;
         }
 
+        // GET: Companies
         public async Task<IActionResult> Index()
         {
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
-            return _context.Companies != null ?
+            return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Companies'  is null.");
         }
@@ -63,7 +68,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,domainName,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,Name,Email,LogoURI,IsToBeDeleted")] Company company)
         {
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
@@ -101,7 +106,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,domainName,Email,LogoURI,IsToBeDeleted")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,LogoURI,IsToBeDeleted")] Company company)
         {
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
@@ -185,7 +190,7 @@ namespace MKsEMS.Controllers
                     company.IsToBeDeleted = true;
                 }
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -203,6 +208,7 @@ namespace MKsEMS.Controllers
 
             return true;
         }
+
         private bool CompanyExists(int id)
         {
           return (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();

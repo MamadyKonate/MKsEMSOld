@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public static class CurrentUser
+    public static class CurrentUser 
     {
         public static User GetLoggedInUser { get; set; } = new();
 
