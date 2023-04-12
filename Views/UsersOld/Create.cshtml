@@ -1,6 +1,5 @@
 ﻿@model MKsEMS.Models.User
 
-
 @{
     ViewData["Title"] = "Create a new user";
 
@@ -11,6 +10,7 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+
 <h4>User</h4>
 <hr />
 <div class="row">
@@ -27,7 +27,9 @@
                 <input asp-for="Surname" class="form-control" />
                 <span asp-validation-for="Surname" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            @*Auto populated*@
+            <div class="form-group" hidden>
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
@@ -37,12 +39,7 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ManagerEmail" class="control-label"></label>
-                <input asp-for="ManagerEmail" class="form-control" />
-                <span asp-validation-for="ManagerEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="DOB" class="control-label"></label>
                 <input asp-for="DOB" class="form-control" />
                 <span asp-validation-for="DOB" class="text-danger"></span>
@@ -66,26 +63,6 @@
                 <label asp-for="Salary" class="control-label"></label>
                 <input asp-for="Salary" class="form-control" />
                 <span asp-validation-for="Salary" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsUserLoggedIn" /> @Html.DisplayNameFor(model => model.IsUserLoggedIn)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAdmin" /> @Html.DisplayNameFor(model => model.IsAdmin)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsManager" /> @Html.DisplayNameFor(model => model.IsManager)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsCEO" /> @Html.DisplayNameFor(model => model.IsCEO)
-                </label>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

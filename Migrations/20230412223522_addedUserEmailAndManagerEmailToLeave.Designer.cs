@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    [Migration("20230412123615_addJobTitleClass")]
-    partial class addJobTitleClass
+    [Migration("20230412223522_addedUserEmailAndManagerEmailToLeave")]
+    partial class addedUserEmailAndManagerEmailToLeave
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,10 @@ namespace MKsEMS.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("DomainName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -41,10 +45,6 @@ namespace MKsEMS.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("domainName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
@@ -56,11 +56,15 @@ namespace MKsEMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Address1")
+                    b.Property<string>("AddressLine1")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Address2")
+                    b.Property<string>("AddressLine2")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AddressLine3")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -73,10 +77,6 @@ namespace MKsEMS.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Eircode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Mobile")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -121,6 +121,9 @@ namespace MKsEMS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -148,10 +151,13 @@ namespace MKsEMS.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ManagerEmail")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Taken")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("userEmail")
+                    b.Property<int>("UserEmail")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -181,10 +187,6 @@ namespace MKsEMS.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateOnly>("DOB")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Department")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Discriminator")
@@ -228,7 +230,7 @@ namespace MKsEMS.Migrations
                     b.Property<double>("SickLeaveTaken")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("SurName")
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
@@ -262,7 +264,7 @@ namespace MKsEMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserLogin");
+                    b.ToTable("UserLogins");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.Administraor", b =>

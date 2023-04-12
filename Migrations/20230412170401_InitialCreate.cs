@@ -6,11 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MKsEMS.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Companies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    DomainName = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    LogoURI = table.Column<string>(type: "TEXT", nullable: false),
+                    IsToBeDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companies", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Contacts",
                 columns: table => new
@@ -20,6 +37,10 @@ namespace MKsEMS.Migrations
                     AddressLine1 = table.Column<string>(type: "TEXT", nullable: false),
                     AddressLine2 = table.Column<string>(type: "TEXT", nullable: false),
                     AddressLine3 = table.Column<string>(type: "TEXT", nullable: false),
+                    City = table.Column<string>(type: "TEXT", nullable: false),
+                    County = table.Column<string>(type: "TEXT", nullable: false),
+                    Eircode = table.Column<string>(type: "TEXT", nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", nullable: false),
                     UserEmail = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -33,14 +54,26 @@ namespace MKsEMS.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    userEmail = table.Column<string>(type: "TEXT", nullable: false),
-                    encPass = table.Column<string>(type: "TEXT", nullable: false),
-                    saltStart = table.Column<string>(type: "TEXT", nullable: false),
-                    saltEnd = table.Column<string>(type: "TEXT", nullable: false)
+                    UserEmail = table.Column<string>(type: "TEXT", nullable: false),
+                    EncPass = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Credentials", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobTitles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobTitles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,11 +100,25 @@ namespace MKsEMS.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LeaveTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLogins",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLogins", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,17 +127,20 @@ namespace MKsEMS.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    SurName = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Surname = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
-                    ManagerId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Department = table.Column<string>(type: "TEXT", nullable: false),
+                    ManagerEmail = table.Column<string>(type: "TEXT", nullable: false),
                     DOB = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     LeaveEntitement = table.Column<double>(type: "REAL", nullable: false),
                     LeaveTaken = table.Column<double>(type: "REAL", nullable: false),
                     SickLeaveTaken = table.Column<double>(type: "REAL", nullable: false),
                     Salary = table.Column<double>(type: "REAL", nullable: false),
+                    IsUserLoggedIn = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsManager = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsCEO = table.Column<bool>(type: "INTEGER", nullable: false),
                     Discriminator = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -103,16 +153,25 @@ namespace MKsEMS.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Companies");
+
+            migrationBuilder.DropTable(
                 name: "Contacts");
 
             migrationBuilder.DropTable(
                 name: "Credentials");
 
             migrationBuilder.DropTable(
+                name: "JobTitles");
+
+            migrationBuilder.DropTable(
                 name: "Leaves");
 
             migrationBuilder.DropTable(
                 name: "LeaveTypes");
+
+            migrationBuilder.DropTable(
+                name: "UserLogins");
 
             migrationBuilder.DropTable(
                 name: "Users");
