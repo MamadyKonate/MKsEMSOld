@@ -18,9 +18,7 @@ namespace MKsEMS.Models
         public string Title { get; set; }
         [Required, EmailAddress]
         public string ManagerEmail { get; set; }
-        [Required]
-        public string Department { get; set; }
-        [Required, DataType(DataType.Date)]
+        [Required]        
         public DateOnly DOB { get; set; }
         public double LeaveEntitement { get; set; } = 25;
         public double LeaveTaken { get; set; }
