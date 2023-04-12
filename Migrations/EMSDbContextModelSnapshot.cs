@@ -23,36 +23,6 @@ namespace MKsEMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsToBeDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LogoURI")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("domainName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("MKsEMS.Models.Contact", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Address1")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -73,11 +43,45 @@ namespace MKsEMS.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Mobile")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsToBeDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LogoURI")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("MKsEMS.Models.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AddressLine2")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AddressLine3")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

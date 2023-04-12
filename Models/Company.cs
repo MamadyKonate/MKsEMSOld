@@ -7,11 +7,21 @@ namespace MKsEMS.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public  string Name { get; set; } = "MK's EMS";      
-        
+        public  string Name { get; set; } = "MK's EMS";
+        [Required]
+        public  string Address1 { get; set; } = "1234 Main St.";
+        [Required]
+        public string Address2 { get; set; } = "Suite 123";
+        [Required]
+        public  string City { get; set; } = "Anytown";
+        [Required]
+        public string County { get; set; } = "Anycounty";
+        [Required]
+        public string Eircode { get; set; } = "12345";
+        [Required, Phone]
+        public string Phone { get; set; } = "123-456-7890";
         [Required, EmailAddress]
         public string Email { get; set; } = "company.emailc.ie";
-        public string domainName { get; set; }
         public string LogoURI { get; set; } = "";
         public bool IsToBeDeleted { get; set; } = false;
     }

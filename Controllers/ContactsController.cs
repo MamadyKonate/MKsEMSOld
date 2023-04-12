@@ -22,10 +22,7 @@ namespace MKsEMS.Controllers
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
-            return _context.Contacts != null ? 
+              return _context.Contacts != null ? 
                           View(await _context.Contacts.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Contacts'  is null.");
         }
@@ -33,9 +30,6 @@ namespace MKsEMS.Controllers
         // GET: Contacts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -54,9 +48,6 @@ namespace MKsEMS.Controllers
         // GET: Contacts/Create
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             return View();
         }
 
@@ -65,11 +56,8 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Address1,Address2,City,County,Eircode,Phone,Mobile,UserEmail")] Contact contact)
+        public async Task<IActionResult> Create([Bind("Id,AddressLine1,AddressLine2,AddressLine3,UserEmail")] Contact contact)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (ModelState.IsValid)
             {
                 _context.Add(contact);
@@ -82,9 +70,6 @@ namespace MKsEMS.Controllers
         // GET: Contacts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -103,11 +88,8 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Address1,Address2,City,County,Eircode,Phone,Mobile,UserEmail")] Contact contact)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AddressLine1,AddressLine2,AddressLine3,UserEmail")] Contact contact)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id != contact.Id)
             {
                 return NotFound();
@@ -139,9 +121,6 @@ namespace MKsEMS.Controllers
         // GET: Contacts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -162,9 +141,6 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (_context.Contacts == null)
             {
                 return Problem("Entity set 'EMSDbContext.Contacts'  is null.");

@@ -15,7 +15,6 @@ namespace MKsEMS.Controllers
     {
         private readonly EMSDbContext _context;
         private readonly EMSDbContext _contextCredentails;
-        private readonly Credentials _credentials = new();
         public UsersController(EMSDbContext context)
         {
             _context = context;
@@ -71,35 +70,24 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,SurName,Email,Title,ManagerEmail,Department,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
         {
-            ViewData["MustAddContactToUser"] = null;
-            ViewData["TheNewUser"] = null;
-
             if (ModelState.IsValid)
             {
-                //creating email address for the user
-                //NEED CHECKING IF USER WITH SAME EMAIL EXISTS
-                //THEN INCREMENT BY 1
-                if (_context.Companies.First().domainName != null)
-                    user.Email = string.Concat(user.FirstName, ".", user.SurName, "@", _context.Companies.First().domainName);
-                //Adding/creating email and temporary password into Credentials table for the user                 
-                _credentials.UserEmail = user.Email;
+                //Adding/creating email and temporary password into Credentials table for the user 
+                Credentials credentials = new ();
+                credentials.UserEmail = user.Email;
                 string pass = GenerateRandomPass.GeTempPassword();
 
                      
-                _credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
+                credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
                 
-                await _context.AddAsync(_credentials);
+                await _context.AddAsync(credentials);
                 _context.SaveChangesAsync();
 
                 //now creating a record in Users table for the user
                 _context.Add(user);                
                 await _context.SaveChangesAsync();
-                TempData["MustAddContactToUser"] = "Please ensure you fill in the contact details for the new user";
-                TempData["UserEmail"] = user.Email; 
-                ViewData["MustAddContactToUser"] = "Please ensure you fill in the contact details for the new user";
-                ViewData["UserEmail"] = user.Email;
                 
-                return RedirectToAction("Create", "Contacts");
+                return RedirectToAction(nameof(Index));
             }
             return View(user);
         }
