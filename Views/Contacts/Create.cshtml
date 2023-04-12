@@ -3,7 +3,7 @@
 
 
 @{
-    if (ViewData["MustAddContactToUser"] != null)
+    if (ViewData["MustAddContactToUser"] != null || TempData["MustAddContactToUser"] != null)
     {
 
        var message = ViewData["MustAddContactToUser"] ;

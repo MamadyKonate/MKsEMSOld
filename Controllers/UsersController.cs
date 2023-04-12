@@ -94,7 +94,8 @@ namespace MKsEMS.Controllers
                 //now creating a record in Users table for the user
                 _context.Add(user);                
                 await _context.SaveChangesAsync();
-                
+                TempData["MustAddContactToUser"] = "Please ensure you fill in the contact details for the new user";
+                TempData["UserEmail"] = user.Email; 
                 ViewData["MustAddContactToUser"] = "Please ensure you fill in the contact details for the new user";
                 ViewData["UserEmail"] = user.Email;
                 
