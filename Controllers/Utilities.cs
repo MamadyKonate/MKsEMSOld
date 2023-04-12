@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MKsEMS.Data;
 using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public static class CurrentUser
+    public static class CurrentUser 
     {
         public static User GetLoggedInUser { get; set; } = new();
 
