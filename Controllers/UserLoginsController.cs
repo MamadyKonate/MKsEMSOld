@@ -35,9 +35,9 @@ namespace MKsEMS.Controllers
             return View();
         }
         /// <summary>
-        /// Comparing user's _credentials their conterpart on the DB
+        /// Comparing user's credentials their conterpart on the DB
         /// </summary>
-        /// <param name="user">User logging in</param>
+        /// <param name="user"></param>
         /// <returns></returns>
         // POST: UserLogins/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    [Migration("20230411232905_domainNameToCompany")]
-    partial class domainNameToCompany
+    [Migration("20230412123454_addedJobTitleClass")]
+    partial class addedJobTitleClass
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

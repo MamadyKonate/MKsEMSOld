@@ -22,10 +22,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves
         public async Task<IActionResult> Index()
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-            
-            return _context.Leaves != null ?
+              return _context.Leaves != null ? 
                           View(await _context.Leaves.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Leaves'  is null.");
         }
@@ -33,10 +30,6 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
-
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -55,9 +48,6 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Create
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             return View();
         }
 
@@ -68,9 +58,6 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (ModelState.IsValid)
             {
                 _context.Add(leave);
@@ -83,9 +70,6 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -106,9 +90,6 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id != leave.Id)
             {
                 return NotFound();
@@ -140,9 +121,6 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -163,9 +141,6 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!CurrentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;           
-
             if (_context.Leaves == null)
             {
                 return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
@@ -175,14 +150,14 @@ namespace MKsEMS.Controllers
             {
                 _context.Leaves.Remove(leave);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool LeaveExists(int id)
         {
-            return (_context.Leaves?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Leaves?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
