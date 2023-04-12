@@ -72,9 +72,16 @@ namespace MKsEMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Adding/creating email and temporary password into Credentials table for the user 
-                Credentials credentials = new ();
-                credentials.UserEmail = user.Email;
+
+                //creating email address for the user
+                 SetEmail(user);
+
+//                if (_context.Companies.First().domainName != null)
+ //                   user.Email = string.Concat(user.FirstName, ".", user.SurName, "@", _context.Companies.First().domainName);
+                
+                //Adding/creating email and temporary password into Credentials table for the user                 
+                _credentials.UserEmail = user.Email;
+
                 string pass = GenerateRandomPass.GeTempPassword();
 
                      
@@ -92,7 +99,33 @@ namespace MKsEMS.Controllers
             return View(user);
         }
 
-        
+        private void SetEmail(User user)
+        {
+            int counter = 0;
+            string email, domainName = (_context.Companies.First().domainName);
+            bool emailSet = false;
+            do
+            {
+                if (counter == 0)
+                {
+                    email = string.Concat(user.FirstName, ".", user.SurName, "@", domainName);
+                }
+                else
+                {
+                    email = string.Concat(user.FirstName, ".", user.SurName, counter, "@", domainName);
+                }
+
+                if (_context.Users.FirstOrDefault(u => u.Email.ToLower() == email.ToLower()) == null)
+                    emailSet = true;
+                    user.Email = email;
+
+
+                counter++;
+
+            } while (!emailSet);
+
+        }
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
