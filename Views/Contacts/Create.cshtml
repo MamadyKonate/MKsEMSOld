@@ -6,8 +6,8 @@
     if (ViewData["MustAddContactToUser"] != null || TempData["MustAddContactToUser"] != null)
     {
 
-       var message = ViewData["MustAddContactToUser"] ;
-       var userEmail = ViewData["UserEmail"];
+       var message = TempData["MustAddContactToUser"] ;
+       var userEmail = TempData["UserEmail"];
 
 
         ViewData["Title"] = "Create";
@@ -58,7 +58,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="UserEmail" class="control-label">User's Email</label>
-                        <input asp-for="UserEmail" class="form-control" value="@userEmail}"> 
+                        <input asp-for="UserEmail" class="form-control" value="@userEmail"> 
                         <span asp-validation-for="UserEmail" class="text-danger"></span>
                     </div>
                     <div class="form-group">
