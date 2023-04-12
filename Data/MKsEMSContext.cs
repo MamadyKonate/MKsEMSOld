@@ -19,6 +19,7 @@ namespace MKsEMS.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Manager> Managers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<JobTitle> JobTitles { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Credentials> Credentials { get; set; } 
         public DbSet<Contact> Contacts { get; set; }
