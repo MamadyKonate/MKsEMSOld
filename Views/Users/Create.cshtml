@@ -1,10 +1,15 @@
 ﻿@model MKsEMS.Models.User
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create a new user";
+
+    if (TempData["UserExistError"] != null)
+    {
+        <label class="text-danger">@TempData["UserExistError"]</label>
+    }
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
 <h4>User</h4>
 <hr />
