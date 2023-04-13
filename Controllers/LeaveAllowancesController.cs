@@ -10,87 +10,87 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class LeavesController : Controller
+    public class LeaveAllowancesController : Controller
     {
         private readonly EMSDbContext _context;
 
-        public LeavesController(EMSDbContext context)
+        public LeaveAllowancesController(EMSDbContext context)
         {
             _context = context;
         }
 
-        // GET: Leaves1
+        // GET: LeaveAllowances
         public async Task<IActionResult> Index()
         {
-              return _context.Leaves != null ? 
-                          View(await _context.Leaves.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+              return _context.LeaveAllowances != null ? 
+                          View(await _context.LeaveAllowances.ToListAsync()) :
+                          Problem("Entity set 'EMSDbContext.LeaveAllowances'  is null.");
         }
 
-        // GET: Leaves1/Details/5
+        // GET: LeaveAllowances/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var leaveAllowance = await _context.LeaveAllowances
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (leaveAllowance == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(leaveAllowance);
         }
 
-        // GET: Leaves1/Create
+        // GET: LeaveAllowances/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Leaves1/Create
+        // POST: LeaveAllowances/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(leave);
+                _context.Add(leaveAllowance);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(leaveAllowance);
         }
 
-        // GET: Leaves1/Edit/5
+        // GET: LeaveAllowances/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave == null)
+            var leaveAllowance = await _context.LeaveAllowances.FindAsync(id);
+            if (leaveAllowance == null)
             {
                 return NotFound();
             }
-            return View(leave);
+            return View(leaveAllowance);
         }
 
-        // POST: Leaves1/Edit/5
+        // POST: LeaveAllowances/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
-            if (id != leave.Id)
+            if (id != leaveAllowance.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace MKsEMS.Controllers
             {
                 try
                 {
-                    _context.Update(leave);
+                    _context.Update(leaveAllowance);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LeaveExists(leave.Id))
+                    if (!LeaveAllowanceExists(leaveAllowance.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace MKsEMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(leaveAllowance);
         }
 
-        // GET: Leaves1/Delete/5
+        // GET: LeaveAllowances/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var leaveAllowance = await _context.LeaveAllowances
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (leaveAllowance == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(leaveAllowance);
         }
 
-        // POST: Leaves1/Delete/5
+        // POST: LeaveAllowances/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Leaves == null)
+            if (_context.LeaveAllowances == null)
             {
-                return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+                return Problem("Entity set 'EMSDbContext.LeaveAllowances'  is null.");
             }
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave != null)
+            var leaveAllowance = await _context.LeaveAllowances.FindAsync(id);
+            if (leaveAllowance != null)
             {
-                _context.Leaves.Remove(leave);
+                _context.LeaveAllowances.Remove(leaveAllowance);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LeaveExists(int id)
+        private bool LeaveAllowanceExists(int id)
         {
-          return (_context.Leaves?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.LeaveAllowances?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

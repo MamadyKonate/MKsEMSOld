@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<MKsEMS.Models.Leave>
 
 @{
-    ViewData["JobTitle"] = "Index";
+    ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
@@ -14,6 +14,15 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.UserEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateTo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Allowance)
@@ -38,6 +47,15 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UserEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateFrom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Allowance)

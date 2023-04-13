@@ -10,87 +10,87 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class LeavesController : Controller
+    public class JobsController : Controller
     {
         private readonly EMSDbContext _context;
 
-        public LeavesController(EMSDbContext context)
+        public JobsController(EMSDbContext context)
         {
             _context = context;
         }
 
-        // GET: Leaves1
+        // GET: Jobs
         public async Task<IActionResult> Index()
         {
-              return _context.Leaves != null ? 
-                          View(await _context.Leaves.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+              return _context.Jobs != null ? 
+                          View(await _context.Jobs.ToListAsync()) :
+                          Problem("Entity set 'EMSDbContext.Jobs'  is null.");
         }
 
-        // GET: Leaves1/Details/5
+        // GET: Jobs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var job = await _context.Jobs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (job == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(job);
         }
 
-        // GET: Leaves1/Create
+        // GET: Jobs/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Leaves1/Create
+        // POST: Jobs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,JobTitle,Salary,Description,IsActive")] Job job)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(leave);
+                _context.Add(job);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(job);
         }
 
-        // GET: Leaves1/Edit/5
+        // GET: Jobs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave == null)
+            var job = await _context.Jobs.FindAsync(id);
+            if (job == null)
             {
                 return NotFound();
             }
-            return View(leave);
+            return View(job);
         }
 
-        // POST: Leaves1/Edit/5
+        // POST: Jobs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,JobTitle,Salary,Description,IsActive")] Job job)
         {
-            if (id != leave.Id)
+            if (id != job.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace MKsEMS.Controllers
             {
                 try
                 {
-                    _context.Update(leave);
+                    _context.Update(job);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LeaveExists(leave.Id))
+                    if (!JobExists(job.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace MKsEMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(job);
         }
 
-        // GET: Leaves1/Delete/5
+        // GET: Jobs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var job = await _context.Jobs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (job == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(job);
         }
 
-        // POST: Leaves1/Delete/5
+        // POST: Jobs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Leaves == null)
+            if (_context.Jobs == null)
             {
-                return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+                return Problem("Entity set 'EMSDbContext.Jobs'  is null.");
             }
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave != null)
+            var job = await _context.Jobs.FindAsync(id);
+            if (job != null)
             {
-                _context.Leaves.Remove(leave);
+                _context.Jobs.Remove(job);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LeaveExists(int id)
+        private bool JobExists(int id)
         {
-          return (_context.Leaves?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Jobs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

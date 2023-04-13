@@ -10,87 +10,87 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class LeavesController : Controller
+    public class Companies1Controller : Controller
     {
         private readonly EMSDbContext _context;
 
-        public LeavesController(EMSDbContext context)
+        public Companies1Controller(EMSDbContext context)
         {
             _context = context;
         }
 
-        // GET: Leaves1
+        // GET: Companies1
         public async Task<IActionResult> Index()
         {
-              return _context.Leaves != null ? 
-                          View(await _context.Leaves.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+              return _context.Companies != null ? 
+                          View(await _context.Companies.ToListAsync()) :
+                          Problem("Entity set 'EMSDbContext.Companies'  is null.");
         }
 
-        // GET: Leaves1/Details/5
+        // GET: Companies1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Companies == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (company == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(company);
         }
 
-        // GET: Leaves1/Create
+        // GET: Companies1/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Leaves1/Create
+        // POST: Companies1/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,Name,DomainName,Email,LogoURI,IsToBeDeleted")] Company company)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(leave);
+                _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(company);
         }
 
-        // GET: Leaves1/Edit/5
+        // GET: Companies1/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Companies == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave == null)
+            var company = await _context.Companies.FindAsync(id);
+            if (company == null)
             {
                 return NotFound();
             }
-            return View(leave);
+            return View(company);
         }
 
-        // POST: Leaves1/Edit/5
+        // POST: Companies1/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DomainName,Email,LogoURI,IsToBeDeleted")] Company company)
         {
-            if (id != leave.Id)
+            if (id != company.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace MKsEMS.Controllers
             {
                 try
                 {
-                    _context.Update(leave);
+                    _context.Update(company);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LeaveExists(leave.Id))
+                    if (!CompanyExists(company.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace MKsEMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(leave);
+            return View(company);
         }
 
-        // GET: Leaves1/Delete/5
+        // GET: Companies1/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Leaves == null)
+            if (id == null || _context.Companies == null)
             {
                 return NotFound();
             }
 
-            var leave = await _context.Leaves
+            var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (leave == null)
+            if (company == null)
             {
                 return NotFound();
             }
 
-            return View(leave);
+            return View(company);
         }
 
-        // POST: Leaves1/Delete/5
+        // POST: Companies1/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Leaves == null)
+            if (_context.Companies == null)
             {
-                return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+                return Problem("Entity set 'EMSDbContext.Companies'  is null.");
             }
-            var leave = await _context.Leaves.FindAsync(id);
-            if (leave != null)
+            var company = await _context.Companies.FindAsync(id);
+            if (company != null)
             {
-                _context.Leaves.Remove(leave);
+                _context.Companies.Remove(company);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LeaveExists(int id)
+        private bool CompanyExists(int id)
         {
-          return (_context.Leaves?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

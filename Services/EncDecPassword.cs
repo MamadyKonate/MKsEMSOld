@@ -10,9 +10,7 @@ namespace MKsEMS.Services
         public static string Enc64bitsPass(string password)
         {            
             try
-            {
-                password = "Lamine";
-
+            {  
                 string saltStart = AddSaltStart(), saltEnd = AddSaltEnd();
 
                 password = string.Concat(saltStart, password, saltEnd);

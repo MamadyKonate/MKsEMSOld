@@ -6,10 +6,10 @@ namespace MKsEMS.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public int UserEmail { get; set; }
-        [Required]
-        public int ManagerEmail { get; set; }
+        [Required, EmailAddress]
+        public string UserEmail { get; set; }
+        [Required, EmailAddress]
+        public string ManagerEmail { get; set; }
         [Required, DataType(DataType.Date)]
         public DateOnly DateFrom { get; set; }
         [Required, DataType(DataType.Date)]

@@ -1,21 +1,11 @@
 ﻿@model IEnumerable<MKsEMS.Models.User>
 
 @{
-    ViewData["JobTitle"] = "Index";
+    ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
-<div>
-    @{
-        <div class="alert alert-danger">
-            @TempData["CreateMessageFail"]
-        </div>
-        <div class="alert alert-success">
-            @TempData["CreateMessageSuccess"]
-        </div>
-    }
-</div>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -48,7 +38,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SickLeaveTaken)
-            </th>           
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsUserLoggedIn)
             </th>
