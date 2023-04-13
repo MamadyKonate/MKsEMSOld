@@ -63,7 +63,7 @@ namespace MKsEMS.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobTitles",
+                name: "Jobs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -162,7 +162,7 @@ namespace MKsEMS.Migrations
                 name: "Credentials");
 
             migrationBuilder.DropTable(
-                name: "JobTitles");
+                name: "Jobs");
 
             migrationBuilder.DropTable(
                 name: "Leaves");

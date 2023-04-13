@@ -88,7 +88,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Email,Title,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
         {
             TempData["AdminMessage"] = "";
 
@@ -195,7 +195,7 @@ namespace MKsEMS.Controllers
         /// <returns>Index page of list of users </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,Title,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
         {
             TempData["AdminMessage"] = "";
 

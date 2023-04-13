@@ -146,10 +146,10 @@ namespace MKsEMS.Controllers
         public List<string>? GetJobTitles()
         {
             List<string> _allJobTitles = new();
-            if (_context.JobTitles != null)
-                foreach (var t in _context.JobTitles)
+            if (_context.Jobs != null)
+                foreach (var t in _context.Jobs)
                 {
-                    _allJobTitles.Add(t.Title);
+                    _allJobTitles.Add(t.JobTitle);
                 }
             return _allJobTitles;
         }

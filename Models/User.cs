@@ -15,7 +15,7 @@ namespace MKsEMS.Models
         [Required, EmailAddress]
         public string Email { get; set; }
         [Required]
-        public string Title { get; set; }
+        public string JobTitle { get; set; }
         [Required, EmailAddress]
         public string ManagerEmail { get; set; }
         [Required, DataType(DataType.Date)]       

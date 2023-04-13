@@ -19,7 +19,7 @@ namespace MKsEMS.Controllers
             _context = context;
         }
 
-        // GET: JobTitles
+        // GET: Jobs
         /// <summary>
         /// Displaying a list of all Active Job Titles
         /// </summary>
@@ -29,28 +29,28 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
 
-            return _context.JobTitles != null ? 
-                          View(await _context.JobTitles.Where(j => j.IsActive).ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.JobTitles'  is null.");
+            return _context.Jobs != null ? 
+                          View(await _context.Jobs.Where(j => j.IsActive).ToListAsync()) :
+                          Problem("Entity set 'EMSDbContext.Jobs'  is null.");
         }
 
-        // GET: JobTitles/Details/5
+        // GET: Jobs/Details/5
         /// <summary>
-        /// Details of a selected Job Title
+        /// Details of a selected Job JobTitle
         /// </summary>
-        /// <param name="id">Id of the selected Job Title</param>
-        /// <returns>Details of the selected Job Title</returns>
+        /// <param name="id">Id of the selected Job JobTitle</param>
+        /// <returns>Details of the selected Job JobTitle</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
            
-            if (id == null || _context.JobTitles == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var jobTitle = await _context.JobTitles
+            var jobTitle = await _context.Jobs
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (jobTitle == null)
             {
@@ -60,9 +60,9 @@ namespace MKsEMS.Controllers
             return View(jobTitle);
         }
 
-        // GET: JobTitles/Create
+        // GET: Jobs/Create
         /// <summary>
-        /// Filling out create Job Title form
+        /// Filling out create Job JobTitle form
         /// </summary>
         /// <returns></returns>
         public IActionResult Create()
@@ -73,17 +73,17 @@ namespace MKsEMS.Controllers
             return View();
         }
 
-        // POST: JobTitles/Create
+        // POST: Jobs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         /// <summary>
-        /// Creating the Job Title
+        /// Creating the Job JobTitle
         /// </summary>
-        /// <param name="jobTitle">Job Title details filled out by Administrator</param>
+        /// <param name="jobTitle">Job JobTitle details filled out by Administrator</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description")] JobTitle jobTitle)
+        public async Task<IActionResult> Create([Bind("Id,JobTitle,Description")] Job jobTitle)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
@@ -97,23 +97,23 @@ namespace MKsEMS.Controllers
             return View(jobTitle);
         }
 
-        // GET: JobTitles/Edit/5
+        // GET: Jobs/Edit/5
         /// <summary>
-        /// Filling out the Job Title details on the form
+        /// Filling out the Job JobTitle details on the form
         /// </summary>
-        /// <param name="id">Id of the selected Job Title</param>
+        /// <param name="id">Id of the selected Job JobTitle</param>
         /// <returns>JobTitle object</returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
 
-            if (id == null || _context.JobTitles == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var jobTitle = await _context.JobTitles.FindAsync(id);
+            var jobTitle = await _context.Jobs.FindAsync(id);
             if (jobTitle == null)
             {
                 return NotFound();
@@ -121,18 +121,18 @@ namespace MKsEMS.Controllers
             return View(jobTitle);
         }
 
-        // POST: JobTitles/Edit/5
+        // POST: Jobs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         /// <summary>
-        /// Editing the filled out Job Title
+        /// Editing the filled out Job JobTitle
         /// </summary>
-        /// <param name="id">Id of the Job Title to be edited</param>
-        /// <param name="jobTitle">JobTitle object of the Job Title to be edited</param>
+        /// <param name="id">Id of the Job JobTitle to be edited</param>
+        /// <param name="jobTitle">JobTitle object of the Job JobTitle to be edited</param>
         /// <returns>JobTitle object</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description")] JobTitle jobTitle)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,JobTitle,Description")] Job jobTitle)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
@@ -165,7 +165,7 @@ namespace MKsEMS.Controllers
             return View(jobTitle);
         }
 
-        // GET: JobTitles/Delete/5
+        // GET: Jobs/Delete/5
         /// <summary>
         /// Deleting a JobTitle object to be deleted
         /// </summary>
@@ -176,12 +176,12 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
 
-            if (id == null || _context.JobTitles == null)
+            if (id == null || _context.Jobs == null)
             {
                 return NotFound();
             }
 
-            var jobTitle = await _context.JobTitles
+            var jobTitle = await _context.Jobs
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (jobTitle == null)
             {
@@ -191,7 +191,7 @@ namespace MKsEMS.Controllers
             return View(jobTitle);
         }
 
-        // POST: JobTitles/Delete/5
+        // POST: Jobs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -199,14 +199,14 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
 
-            if (_context.JobTitles == null)
+            if (_context.Jobs == null)
             {
-                return Problem("Entity set 'EMSDbContext.JobTitles'  is null.");
+                return Problem("Entity set 'EMSDbContext.Jobs'  is null.");
             }
-            var jobTitle = await _context.JobTitles.FindAsync(id);
+            var jobTitle = await _context.Jobs.FindAsync(id);
             if (jobTitle != null)
             {
-                _context.JobTitles.Remove(jobTitle);
+                _context.Jobs.Remove(jobTitle);
             }
             
             await _context.SaveChangesAsync();
@@ -227,7 +227,7 @@ namespace MKsEMS.Controllers
 
         private bool JobTitleExists(int id)
         {
-          return (_context.JobTitles?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Jobs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

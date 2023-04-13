@@ -109,7 +109,7 @@ namespace MKsEMS.Migrations
                     b.ToTable("Credentials");
                 });
 
-            modelBuilder.Entity("MKsEMS.Models.JobTitle", b =>
+            modelBuilder.Entity("MKsEMS.Models.Job", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,13 +121,16 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Salary")
+                        .HasColumnType("REAL");
+
                     b.HasKey("Id");
 
-                    b.ToTable("JobTitles");
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.Leave", b =>
@@ -253,7 +256,7 @@ namespace MKsEMS.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
