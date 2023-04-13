@@ -3,6 +3,6 @@
     public class LeaveAllowance
     {
         public int Id { get; set; }
-        public int Allowance { get; set; }
+        public double Allowance { get; set; }
     }
 }
