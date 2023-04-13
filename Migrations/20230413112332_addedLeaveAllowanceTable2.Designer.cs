@@ -3,6 +3,7 @@ using System;
 using MKsEMS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    partial class EMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230413112332_addedLeaveAllowanceTable2")]
+    partial class addedLeaveAllowanceTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -166,21 +169,7 @@ namespace MKsEMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Leaves");
-                });
-
-            modelBuilder.Entity("MKsEMS.Models.LeaveAllowance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Allowance")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LeaveAllowances");
+                    b.ToTable("Leave");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.LeaveType", b =>

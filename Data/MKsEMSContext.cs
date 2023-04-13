@@ -25,6 +25,7 @@ namespace MKsEMS.Data
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Administraor> Administraors { get; set; }
         public DbSet<Leave> Leaves { get; set; }
+        public DbSet<LeaveAllowance> LeaveAllowances { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; } 
         public DbSet<UserLogin> UserLogins { get; set; } = default!;
     }
