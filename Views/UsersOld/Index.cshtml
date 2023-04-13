@@ -39,9 +39,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.SickLeaveTaken)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salary)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -74,9 +71,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SickLeaveTaken)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

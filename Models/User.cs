@@ -22,9 +22,7 @@ namespace MKsEMS.Models
         public DateOnly DOB { get; set; }
         public double LeaveEntitement { get; set; } = 25;
         public double LeaveTaken { get; set; }
-        public double SickLeaveTaken { get; set; }
-        [Required]
-        public double Salary { get; set; }
+        public double SickLeaveTaken { get; set; }        
         public bool IsUserLoggedIn { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsManager { get; set; }
