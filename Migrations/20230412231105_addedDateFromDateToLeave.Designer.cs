@@ -154,7 +154,7 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("LeaveStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeaveTypeId")
+                    b.Property<int>("LeaveType")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ManagerEmail")
