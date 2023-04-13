@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<MKsEMS.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["JobTitle"] = "Index";
 }
 
 <h1>Index</h1>
@@ -22,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.JobTitle)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ManagerEmail)
@@ -38,10 +38,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SickLeaveTaken)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salary)
-            </th>
+            </th>           
             <th>
                 @Html.DisplayNameFor(model => model.IsUserLoggedIn)
             </th>
@@ -70,7 +67,7 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.JobTitle)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ManagerEmail)
@@ -86,9 +83,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SickLeaveTaken)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsUserLoggedIn)

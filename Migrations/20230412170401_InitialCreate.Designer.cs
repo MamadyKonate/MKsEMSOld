@@ -121,13 +121,13 @@ namespace MKsEMS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobTitles");
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.Leave", b =>
@@ -145,7 +145,7 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("LeaveStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeaveTypeId")
+                    b.Property<int>("LeaveType")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Taken")
@@ -229,7 +229,7 @@ namespace MKsEMS.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

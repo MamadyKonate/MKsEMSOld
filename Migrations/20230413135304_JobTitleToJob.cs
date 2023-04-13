@@ -5,24 +5,24 @@
 namespace MKsEMS.Migrations
 {
     /// <inheritdoc />
-    public partial class IsActiveToJobTitle : Migration
+    public partial class JobTitleToJob : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsActive",
+            migrationBuilder.AddColumn<double>(
+                name: "Salary",
                 table: "Jobs",
-                type: "INTEGER",
+                type: "REAL",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0.0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsActive",
+                name: "Salary",
                 table: "Jobs");
         }
     }

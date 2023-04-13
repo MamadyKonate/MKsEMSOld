@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    [Migration("20230412220823_IsActiveToJobTitle")]
-    partial class IsActiveToJobTitle
+    [Migration("20230413112600_addedLeaveAllowanceTable3")]
+    partial class addedLeaveAllowanceTable3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,13 +142,23 @@ namespace MKsEMS.Migrations
                     b.Property<int>("Allowance")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateOnly>("DateFrom")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DateTo")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DenialReason")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LeaveStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeaveType")
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ManagerEmail")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Taken")
@@ -160,6 +170,20 @@ namespace MKsEMS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Leaves");
+                });
+
+            modelBuilder.Entity("MKsEMS.Models.LeaveAllowance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Allowance")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LeaveAllowances");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.LeaveType", b =>

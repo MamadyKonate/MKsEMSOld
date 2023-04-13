@@ -109,7 +109,7 @@ namespace MKsEMS.Migrations
                     b.ToTable("Credentials");
                 });
 
-            modelBuilder.Entity("MKsEMS.Models.JobTitle", b =>
+            modelBuilder.Entity("MKsEMS.Models.Job", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,13 +121,16 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Salary")
+                        .HasColumnType("REAL");
+
                     b.HasKey("Id");
 
-                    b.ToTable("JobTitles");
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.Leave", b =>
@@ -151,8 +154,9 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("LeaveStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeaveTypeId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ManagerEmail")
                         .HasColumnType("INTEGER");
@@ -166,6 +170,20 @@ namespace MKsEMS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Leaves");
+                });
+
+            modelBuilder.Entity("MKsEMS.Models.LeaveAllowance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Allowance")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LeaveAllowances");
                 });
 
             modelBuilder.Entity("MKsEMS.Models.LeaveType", b =>
@@ -217,6 +235,10 @@ namespace MKsEMS.Migrations
                     b.Property<bool>("IsUserLoggedIn")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("LeaveEntitement")
                         .HasColumnType("REAL");
 
@@ -227,19 +249,12 @@ namespace MKsEMS.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Salary")
-                        .HasColumnType("REAL");
-
                     b.Property<double>("SickLeaveTaken")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
