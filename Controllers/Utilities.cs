@@ -51,7 +51,8 @@ namespace MKsEMS.Controllers
         public static SelectList? GetLeaveTypesSelectList() { return new SelectList(alldrop.GetLeaveTypes()); }
         public static SelectList? GetJobTitlesSelectList() { return new SelectList(alldrop.GetJobTitles()); }
         public static SelectList? GetUsersManagerEmailsSelectList() { return new SelectList(alldrop.GetUsersManagerEmails()); }
-      
+        public static SelectList? GeGetLeaveAllowancesSelectList() { return new SelectList(alldrop.GetLeaveAllowances()); }
+
     }
 
 
@@ -113,6 +114,26 @@ namespace MKsEMS.Controllers
             }               
 
             return _emails;
+        }
+
+        /// <summary>
+        /// Retrieving all LeaveAllowances for populating the LeaveEntitlement field when 
+        /// an admin _user is creating/updating User accounts
+        /// </summary>
+        /// <returns>List LeaveAllowances</returns>
+        public List<string>? GetLeaveAllowances()
+        {
+            List<string> _leaveAllowance = new();
+
+            if (_context.LeaveAllowances != null)
+            {
+                foreach (var la in _context.LeaveAllowances)
+                {
+                    _leaveAllowance.Add(la.Allowance.ToString());
+                }
+            }
+
+            return _leaveAllowance;
         }
 
         //*****************************************************************************
