@@ -75,7 +75,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
             if (!CurrentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
@@ -113,7 +113,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveTypeId,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
