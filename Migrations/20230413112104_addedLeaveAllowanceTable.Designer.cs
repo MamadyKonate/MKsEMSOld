@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    [Migration("20230412220823_IsActiveToJobTitle")]
-    partial class IsActiveToJobTitle
+    [Migration("20230413112104_addedLeaveAllowanceTable")]
+    partial class addedLeaveAllowanceTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,13 +142,23 @@ namespace MKsEMS.Migrations
                     b.Property<int>("Allowance")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateOnly>("DateFrom")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DateTo")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DenialReason")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LeaveStatus")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("LeaveType")
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ManagerEmail")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Taken")

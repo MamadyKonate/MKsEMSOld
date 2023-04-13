@@ -17,7 +17,7 @@ namespace MKsEMS.Models
         [Required]
         public int Allowance { get; set; }
         public int Taken { get; set; }
-        public int LeaveTypeId { get; set; }
+        public string LeaveType { get; set; }
         public bool LeaveStatus { get; set; }
         public string? DenialReason { get; set; }
     }
