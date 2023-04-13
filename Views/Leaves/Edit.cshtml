@@ -1,7 +1,7 @@
 ﻿@model MKsEMS.Models.Leave
 
 @{
-    ViewData["JobTitle"] = "Edit";
+    ViewData["Title"] = "Edit";
 }
 
 <h1>Edit</h1>
@@ -17,6 +17,21 @@
                 <label asp-for="UserEmail" class="control-label"></label>
                 <input asp-for="UserEmail" class="form-control" />
                 <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ManagerEmail" class="control-label"></label>
+                <input asp-for="ManagerEmail" class="form-control" />
+                <span asp-validation-for="ManagerEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateFrom" class="control-label"></label>
+                <input asp-for="DateFrom" class="form-control" />
+                <span asp-validation-for="DateFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateTo" class="control-label"></label>
+                <input asp-for="DateTo" class="form-control" />
+                <span asp-validation-for="DateTo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Allowance" class="control-label"></label>

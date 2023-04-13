@@ -1,7 +1,7 @@
 ﻿@model MKsEMS.Models.Leave
 
 @{
-    ViewData["JobTitle"] = "Delete";
+    ViewData["Title"] = "Delete";
 }
 
 <h1>Delete</h1>
@@ -16,6 +16,24 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.UserEmail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ManagerEmail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ManagerEmail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DateFrom)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DateFrom)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DateTo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DateTo)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Allowance)

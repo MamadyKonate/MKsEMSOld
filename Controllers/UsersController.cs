@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +34,8 @@ namespace MKsEMS.Controllers
             if (!CurrentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                         
-            if(!_loggedInUser.IsAdmin ||
-               !_loggedInUser.IsManager ||
+            if(!_loggedInUser.IsAdmin &&
+               !_loggedInUser.IsManager &&
                !_loggedInUser.IsCEO)
                 return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
 
@@ -88,9 +89,11 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,IsUserLoggedIn,IsAdmin,IsManager,IsCEO")] User user)
         {
             TempData["AdminMessage"] = "";
+
+            TempData["CreateMessageFail"] = "";            
 
             if (!AdminUserIsLoggedIn())
             {
@@ -101,21 +104,25 @@ namespace MKsEMS.Controllers
             if (ModelState.IsValid)
             {
                 //creating email address for the user
-                 SetEmail(user);
-        
+                SetEmail(user);
+                string tempPass = GenerateRandomPass.GeTempPassword();
                 //Adding/creating email and temporary password into Credentials table for the user                 
                 _credentials.UserEmail = user.Email;                     
-                _credentials.EncPass = EncDecPassword.Enc64bitsPass(GenerateRandomPass.GeTempPassword());
-                
+                _credentials.EncPass = EncDecPassword.Enc64bitsPass(tempPass);
+
+                user.FirstTimeLogin = true; //So the user will be forced to change password on first login
+
                 await _context.AddAsync(_credentials);
                 _context.SaveChangesAsync();
 
                 //now creating a record in Users table for the user
                 _context.Add(user);                
                 await _context.SaveChangesAsync();
-                
+
+                TempData["CreateMessageSuccess"] = "User:" + user.Email + " - Password is <b>" + tempPass + " </b>";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["CreateMessageFail"] = "The user could not be created at this time. Please try again later.";
             return View(user);
         }
 
@@ -195,7 +202,7 @@ namespace MKsEMS.Controllers
         /// <returns>Index page of list of users </returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,Salary")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,IsUserLoggedIn,IsAdmin,IsManager,IsCEO")] User user)
         {
             TempData["AdminMessage"] = "";
 
@@ -233,6 +240,7 @@ namespace MKsEMS.Controllers
             return View(user);
         }
 
+       
         // GET: Users/Delete/5
         ///<summary>
         /// Opening the form for deleting an existing User account

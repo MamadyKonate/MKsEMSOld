@@ -27,5 +27,6 @@ namespace MKsEMS.Models
         public bool IsAdmin { get; set; }
         public bool IsManager { get; set; }
         public bool IsCEO { get; set; }
+        public bool FirstTimeLogin { get; set; }
     }
 }

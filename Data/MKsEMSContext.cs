@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MKsEMS.Models;
+using MKsEMS.ViewModels;
 
 namespace MKsEMS.Data
 {
@@ -28,5 +29,6 @@ namespace MKsEMS.Data
         public DbSet<LeaveAllowance> LeaveAllowances { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; } 
         public DbSet<UserLogin> UserLogins { get; set; } = default!;
+        public DbSet<ResetPass> ResetPasses { get; set; }
     }
 }

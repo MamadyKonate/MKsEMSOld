@@ -89,7 +89,7 @@ namespace MKsEMS.Controllers
             List<string> _emails = new();
 
             if (_context.Users != null)
-                foreach (var item in _context.Users)
+                foreach (var item in _context.Users.ToList())
                 {
                     _emails.Add(item.Email);
                 }

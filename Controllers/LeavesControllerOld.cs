@@ -10,26 +10,42 @@ using MKsEMS.Models;
 
 namespace MKsEMS.Controllers
 {
-    public class LeavesController : Controller
+    public class LeavesControllerOld : Controller
     {
         private readonly EMSDbContext _context;
-
-        public LeavesController(EMSDbContext context)
+        private readonly User _loggedInUSer = CurrentUser.GetLoggedInUser;
+        public LeavesControllerOld(EMSDbContext context)
         {
             _context = context;
         }
 
-        // GET: Leaves1
+        // GET: Leaves
         public async Task<IActionResult> Index()
         {
-              return _context.Leaves != null ? 
-                          View(await _context.Leaves.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                      
+            if(_context.Credentials != null)
+            { 
+                return CurrentUser.GetLoggedInUser.IsAdmin ? 
+                        View(await _context.Leaves.ToListAsync()) :
+
+                        CurrentUser.GetLoggedInUser.IsAdmin ? 
+                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync()) :
+
+                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync());
+            }
+
+              return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
         }
 
-        // GET: Leaves1/Details/5
+        // GET: Leaves/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -45,19 +61,25 @@ namespace MKsEMS.Controllers
             return View(leave);
         }
 
-        // GET: Leaves1/Create
+        // GET: Leaves/Create
         public IActionResult Create()
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             return View();
         }
 
-        // POST: Leaves1/Create
+        // POST: Leaves/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (ModelState.IsValid)
             {
                 _context.Add(leave);
@@ -67,9 +89,12 @@ namespace MKsEMS.Controllers
             return View(leave);
         }
 
-        // GET: Leaves1/Edit/5
+        // GET: Leaves/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -83,13 +108,16 @@ namespace MKsEMS.Controllers
             return View(leave);
         }
 
-        // POST: Leaves1/Edit/5
+        // POST: Leaves/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id != leave.Id)
             {
                 return NotFound();
@@ -118,9 +146,12 @@ namespace MKsEMS.Controllers
             return View(leave);
         }
 
-        // GET: Leaves1/Delete/5
+        // GET: Leaves/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -136,11 +167,14 @@ namespace MKsEMS.Controllers
             return View(leave);
         }
 
-        // POST: Leaves1/Delete/5
+        // POST: Leaves/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (_context.Leaves == null)
             {
                 return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
@@ -154,6 +188,19 @@ namespace MKsEMS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        /// <summary>
+        /// Checking if logged in user is an Administrator and logged in
+        /// </summary>
+        /// <returns></returns>
+        private bool AdminUserIsLoggedIn()
+        {
+            if (CurrentUser.IsLoggedIn() && CurrentUser.GetLoggedInUser.IsAdmin)
+                return true;
+
+            return false;
+        }
+
 
         private bool LeaveExists(int id)
         {
