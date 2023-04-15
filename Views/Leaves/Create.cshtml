@@ -5,9 +5,15 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Make a Leave request</h1>
 
-<h4>Leave</h4>
+<h4>@{
+        if( TempData["LeaveRqMsg"] != null)
+        {
+            <div class="alert-danger">@TempData["LeaveRqMsg"]</div>
+        }
+        
+}</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">

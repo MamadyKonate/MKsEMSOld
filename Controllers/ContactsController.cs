@@ -13,7 +13,7 @@ namespace MKsEMS.Controllers
     public class ContactsController : Controller
     {
         private readonly EMSDbContext _context;
-
+        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
         public ContactsController(EMSDbContext context)
         {
             _context = context;
@@ -22,14 +22,25 @@ namespace MKsEMS.Controllers
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-              return _context.Contacts != null ? 
-                          View(await _context.Contacts.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Contacts'  is null.");
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+            return _context.Contacts != null ?
+                        View(await _context.Contacts.ToListAsync()) :
+                        Problem("Entity set 'EMSDbContext.Contacts'  is null.");
         }
 
         // GET: Contacts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if(!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+            
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -45,9 +56,15 @@ namespace MKsEMS.Controllers
             return View(contact);
         }
 
-        // GET: Contacts/Create
+        ///GET: Contacts/Create
         public IActionResult Create()
         {
+            if(!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             return View();
         }
 
@@ -58,18 +75,33 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,AddressLine1,AddressLine2,AddressLine3,City,County,Eircode,Phone,UserEmail")] Contact contact)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(contact);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = _context.Users.FirstOrDefault(u => u.Email == contact.UserEmail);
+
+                return RedirectToAction("index" , "Users");
             }
+
             return View(contact);
         }
 
         // GET: Contacts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -90,6 +122,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,AddressLine1,AddressLine2,AddressLine3,City,County,Eircode,Phone,UserEmail")] Contact contact)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id != contact.Id)
             {
                 return NotFound();
@@ -121,6 +159,12 @@ namespace MKsEMS.Controllers
         // GET: Contacts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Contacts == null)
             {
                 return NotFound();
@@ -141,6 +185,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+            
             if (_context.Contacts == null)
             {
                 return Problem("Entity set 'EMSDbContext.Contacts'  is null.");
@@ -150,9 +200,17 @@ namespace MKsEMS.Controllers
             {
                 _context.Contacts.Remove(contact);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool AdminUserIsLoggedIn()
+        {
+            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+                return true;
+
+            return false;
         }
 
         private bool ContactExists(int id)

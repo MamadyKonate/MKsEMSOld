@@ -7,29 +7,60 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MKsEMS.Controllers
 {
     public class LeavesController : Controller
     {
         private readonly EMSDbContext _context;
+        private DateTime _startDate = new(), _endDate = new();
+        TimeSpan duration;
+        int daysOff;
 
         public LeavesController(EMSDbContext context)
         {
             _context = context;
+        }        
+        
+        public bool EnoughDayToTake()
+        {
+            double remainingDays = CurrentUser.GetLoggedInUser.LeaveEntitement - CurrentUser.GetLoggedInUser.LeaveTaken;
+
+            duration = _endDate - _startDate;
+
+            daysOff = duration.Days +1;
+
+
+            return remainingDays >= daysOff;
         }
 
         // GET: Leaves1
         public async Task<IActionResult> Index()
         {
-              return _context.Leaves != null ? 
-                          View(await _context.Leaves.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Leaves'  is null.");
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                        
+            if (_context.Credentials != null)
+            {
+                return CurrentUser.GetLoggedInUser.IsAdmin ?
+                        View(await _context.Leaves.ToListAsync()) :
+
+                        CurrentUser.GetLoggedInUser.IsManager ?
+                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync()) :
+
+                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync());
+            }
+
+            return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
         }
 
         // GET: Leaves1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -48,6 +79,9 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Create
         public IActionResult Create()
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             return View();
         }
 
@@ -58,18 +92,60 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
+            TempData["LeaveRqMsg"] = "";
+
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (ModelState.IsValid)
             {
-                _context.Add(leave);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _startDate = leave.DateFrom.ToDateTime(new TimeOnly());
+                _endDate = leave.DateTo.ToDateTime(new TimeOnly()); 
+
+                if (EnoughDayToTake())
+                {
+                    //Chekcing valid start date 
+                    
+                    if (_startDate.CompareTo(DateTime.Now.Date)>= 0 && _endDate.CompareTo(DateTime.Now.Date) >= 0) 
+                    {                      
+                    
+                        CurrentUser.GetLoggedInUser.LeaveTaken += daysOff;
+                        leave.LeaveStatus = false;
+                        leave.numberOfDays = daysOff;
+
+                        _context.Add(leave);
+                        _context.Users.Update(CurrentUser.GetLoggedInUser);
+
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));                    
+                    
+                    }                   
+                   
+                    TempData["LeaveRqMsg"] = "Leave start date or end date cannot be in the past!  Please tray again";
+                    return View(leave);                    
+                }
+                else
+                {
+                    TempData["LeaveRqMsg"] = "You don't seem to have enough days to book.";
+                }
+                
             }
+            else
+            {
+                TempData["LeaveRqMsg"] = "Somthing went wrong, please try again";
+
+                return View(leave);
+            }
+               
             return View(leave);
         }
 
         // GET: Leaves1/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -90,6 +166,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
+            _startDate = Convert.ToDateTime(leave.DateFrom);
+            _endDate = Convert.ToDateTime(leave.DateTo);
+
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id != leave.Id)
             {
                 return NotFound();
@@ -121,6 +203,9 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (id == null || _context.Leaves == null)
             {
                 return NotFound();
@@ -141,6 +226,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!CurrentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
             if (_context.Leaves == null)
             {
                 return Problem("Entity set 'EMSDbContext.Leaves'  is null.");

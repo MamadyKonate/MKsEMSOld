@@ -8,12 +8,21 @@
 
 <div>
     @{
-        <div class="alert alert-danger">
-            @TempData["CreateMessageFail"]
-        </div>
-        <div class="alert alert-success">
-            @TempData["CreateMessageSuccess"]
-        </div>
+        if (TempData["CreateMessageFail"]!=null)
+        {
+            <div class="alert alert-danger">
+                @TempData["CreateMessageFail"]
+            </div>
+        }
+        if (TempData["CreateMessageSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                <h5>
+                    The user has successfully been created, please inform the relevant personnel with below information.  <br />
+                    @TempData["CreateMessageSuccess"]
+                </h5> 
+            </div>
+        }
     }
 </div>
 <p>
