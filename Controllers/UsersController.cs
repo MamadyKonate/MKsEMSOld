@@ -114,13 +114,14 @@ namespace MKsEMS.Controllers
 
                 await _context.AddAsync(_credentials);
                 _context.SaveChangesAsync();
-
+                
                 //now creating a record in Users table for the user
                 _context.Add(user);                
                 await _context.SaveChangesAsync();
 
-                TempData["CreateMessageSuccess"] = "User:" + user.Email + " - Password is " + tempPass + "";
-                return RedirectToAction(nameof(Index));
+                TempData["CreateMessageSuccess"] = "User: " + user.Email + " - Password: " + tempPass;
+                TempData["userEmail"] = user.Email;
+                return RedirectToAction("Create", "Contacts");
             }
             TempData["CreateMessageFail"] = "The user could not be created at this time. Please try again later.";
             return View(user);
