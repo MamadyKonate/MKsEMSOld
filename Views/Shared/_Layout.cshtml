@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using MKsEMS.Data
+@using MKsEMS.Controllers
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -45,6 +48,18 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            
+
+            @{
+                ViewData["Title"] = "Index";
+                var company = new EMSDbContext().Companies.Where(c => !c.IsToBeDeleted).ToList().ElementAt(0).Name;
+
+            }
+
+            <h1>Welcome to @company - </h1><h4>@CurrentUser.GetLoggedInUser.Email</h4>
+            <br />
+             
+            <p>
             @RenderBody()
         </main>
     </div>

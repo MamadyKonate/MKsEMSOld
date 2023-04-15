@@ -25,6 +25,9 @@
                 @Html.DisplayNameFor(model => model.DateTo)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.numberOfDays)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Allowance)
             </th>
             <th>
@@ -58,8 +61,11 @@
                 @Html.DisplayFor(modelItem => item.DateTo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Allowance)
+                @Html.DisplayFor(modelItem => item.numberOfDays)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Allowance)
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Taken)
             </td>

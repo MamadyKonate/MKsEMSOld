@@ -13,6 +13,8 @@ namespace MKsEMS.Controllers
     public class JobsController : Controller
     {
         private readonly EMSDbContext _context;
+        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
+
 
         public JobsController(EMSDbContext context)
         {
@@ -22,7 +24,13 @@ namespace MKsEMS.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-              return _context.Jobs != null ? 
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
+            return _context.Jobs != null ? 
                           View(await _context.Jobs.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Jobs'  is null.");
         }
@@ -30,6 +38,12 @@ namespace MKsEMS.Controllers
         // GET: Jobs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Jobs == null)
             {
                 return NotFound();
@@ -48,6 +62,12 @@ namespace MKsEMS.Controllers
         // GET: Jobs/Create
         public IActionResult Create()
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             return View();
         }
 
@@ -58,6 +78,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,JobTitle,Salary,Description,IsActive")] Job job)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(job);
@@ -70,6 +96,12 @@ namespace MKsEMS.Controllers
         // GET: Jobs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Jobs == null)
             {
                 return NotFound();
@@ -90,6 +122,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,JobTitle,Salary,Description,IsActive")] Job job)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id != job.Id)
             {
                 return NotFound();
@@ -121,6 +159,12 @@ namespace MKsEMS.Controllers
         // GET: Jobs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (id == null || _context.Jobs == null)
             {
                 return NotFound();
@@ -141,6 +185,12 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            }
+
             if (_context.Jobs == null)
             {
                 return Problem("Entity set 'EMSDbContext.Jobs'  is null.");
@@ -148,13 +198,21 @@ namespace MKsEMS.Controllers
             var job = await _context.Jobs.FindAsync(id);
             if (job != null)
             {
-                _context.Jobs.Remove(job);
+                job.IsActive = false;
+               //  _context.Jobs.Remove(job);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        private bool AdminUserIsLoggedIn()
+        {
+            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+                return true;
+
+            return false;
+        }
         private bool JobExists(int id)
         {
           return (_context.Jobs?.Any(e => e.Id == id)).GetValueOrDefault();
