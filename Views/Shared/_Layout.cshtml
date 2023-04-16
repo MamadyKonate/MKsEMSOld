@@ -1,5 +1,6 @@
 ﻿@inject IHttpContextAccessor contex
 @using MKsEMS.Data
+
 @using MKsEMS.Controllers
 
 <!DOCTYPE html>
@@ -58,6 +59,7 @@
             }
 
             <h1>Welcome to @company - </h1><h4>@CurrentUser.GetLoggedInUser.Email</h4> - - @contex.HttpContext.Session.GetString("userEmail")
+
             <br />
              
             <p>
