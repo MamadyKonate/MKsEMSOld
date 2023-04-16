@@ -8,14 +8,17 @@ namespace MKsEMS.Controllers
     public class UserLoginsController : Controller
     {
         private readonly EMSDbContext _context;
+        private CurrentUser2 _loggedInUser;
         private static int _incorrectPasswordEntered;
-       
 
-        public UserLoginsController(EMSDbContext context)
+
+        public UserLoginsController(EMSDbContext context, CurrentUser2 loggedInUser)
         {
-            _context = context;            
+            _context = context;
+            _loggedInUser = loggedInUser;
         }
-
+        
+        
         // GET: UserLogins
 
         /// <summary>
@@ -27,6 +30,7 @@ namespace MKsEMS.Controllers
             //Ensure Current user is not set to IsLoggedIn - in case the HTTP Post is comming from Log out
             try
             {
+                _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;                
                 CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
                 TempData["Message"] = "Please login to continue";
             }
@@ -45,10 +49,11 @@ namespace MKsEMS.Controllers
         [HttpPost, ActionName("Login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Email,Password")] UserLogin user)
-        {
+        {            
             if (ModelState.IsValid)
             {
                 TempData["Message"] = "";
+                TempData["email"] = "";
 
                 //Getting account with matching email first
                 var userCredentials = (_context.Credentials.Where(
@@ -67,9 +72,14 @@ namespace MKsEMS.Controllers
 
                         theUser.IsUserLoggedIn = true;
 
+                        //Putting the logged in user in the session in CurrentUser2 class
+                        _loggedInUser.SetLoggedInUser(theUser);
+                        
                         CurrentUser.GetLoggedInUser = theUser;
                         _incorrectPasswordEntered = 0;
 
+                        TempData["email"] = _loggedInUser.GetLoggedInUser().Email;
+                        
                         //ViewModelData.GetFilteredUsers = ViewModelData.GetUsers();
 
                         if (theUser.IsAdmin || theUser.IsManager)
@@ -83,6 +93,8 @@ namespace MKsEMS.Controllers
                     }
                     else
                     {
+                        _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;
+                        
                         CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
                         TempData["Message"] = "Incorrect Username or Password entered " + (_incorrectPasswordEntered += 1) + " time(s).";
                         return View();

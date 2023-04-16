@@ -1,7 +1,9 @@
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using Newtonsoft.Json;
 
 namespace MKsEMS.Controllers
 {
@@ -20,6 +22,66 @@ namespace MKsEMS.Controllers
 
             return false;
         }
+    }
+
+    public  class CurrentUser2
+    {
+        private readonly IHttpContextAccessor _sessionContext;
+        private User _loggedInUser { get; set; } = new();
+        public CurrentUser2(IHttpContextAccessor sessionContext)
+        {
+            _sessionContext = sessionContext;
+        }
+
+        // NOT SURE ANY LONGER WHY USING SESSION IN THIS AFTER ALL.
+        // NOT SURE IF IT MIGHT COME HANDY IN THE LONG RUN - REMAINS TO BE SEEN
+        
+       
+        /// <summary>
+        /// Converts the _user object to a Json string and stores it in the session.
+        /// </summary>
+        /// <param name="user">User Currently logged in</param>
+        public void SetLoggedInUser(User user)
+        {
+            int loggedIn = 0;
+
+            string userJSon = JsonConvert.SerializeObject(user);
+            _sessionContext.HttpContext.Session.SetString("_loggedInUser", userJSon);
+            
+            //the idea is that 
+            if (GetLoggedInUser().IsUserLoggedIn)
+                loggedIn = 1;
+                
+            _sessionContext.HttpContext.Session.SetString("userEmail", user.Email);               
+            _sessionContext.HttpContext.Session.SetInt32("loggedInUserInt", loggedIn);
+
+        }
+
+        /// <summary>
+        /// Reconstruct string in Json format from the session back to the User object for processing
+        /// </summary>
+        /// <returns>Reconstructed logged in User</returns>
+
+        public User GetLoggedInUser ()
+        {
+            string userJSon = _sessionContext.HttpContext.Session.GetString("_loggedInUser");
+            _loggedInUser = JsonConvert.DeserializeObject<User>(userJSon);
+
+            return _loggedInUser;
+        }
+
+        /// <summary>
+        /// 
+        /// It will then return true if a _user is logged in.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLoggedIn()
+        {  
+            if (GetLoggedInUser().IsUserLoggedIn)
+                return true;
+
+            return false;
+        }       
     }
 
     public static class ViewModelData
