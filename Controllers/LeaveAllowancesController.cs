@@ -13,16 +13,21 @@ namespace MKsEMS.Controllers
     public class LeaveAllowancesController : Controller
     {
         private readonly EMSDbContext _context;
+        private readonly CurrentUser2 _currentUser;
 
-        public LeaveAllowancesController(EMSDbContext context)
+        public LeaveAllowancesController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: LeaveAllowances
         public async Task<IActionResult> Index()
         {
-              return _context.LeaveAllowances != null ? 
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
+            return _context.LeaveAllowances != null ? 
                           View(await _context.LeaveAllowances.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.LeaveAllowances'  is null.");
         }
@@ -30,6 +35,10 @@ namespace MKsEMS.Controllers
         // GET: LeaveAllowances/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
+            
             if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
@@ -48,6 +57,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveAllowances/Create
         public IActionResult Create()
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             return View();
         }
 
@@ -58,6 +70,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             if (ModelState.IsValid)
             {
                 _context.Add(leaveAllowance);
@@ -70,6 +85,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveAllowances/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
@@ -90,6 +108,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             if (id != leaveAllowance.Id)
             {
                 return NotFound();
@@ -121,6 +142,9 @@ namespace MKsEMS.Controllers
         // GET: LeaveAllowances/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             if (id == null || _context.LeaveAllowances == null)
             {
                 return NotFound();
@@ -141,6 +165,9 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!AdminUserIsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in as Administratro;
+
             if (_context.LeaveAllowances == null)
             {
                 return Problem("Entity set 'EMSDbContext.LeaveAllowances'  is null.");
@@ -155,6 +182,24 @@ namespace MKsEMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        /// <summary>
+        /// Checking if logged in user is an Administrator and logged in
+        /// </summary>
+        /// <returns></returns>
+        private bool AdminUserIsLoggedIn()
+        {
+            if (_currentUser.GetLoggedInUser() == null)
+                return false;
+
+
+            if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
+                return true;
+
+            return false;
+        }
+
+        
         private bool LeaveAllowanceExists(int id)
         {
           return (_context.LeaveAllowances?.Any(e => e.Id == id)).GetValueOrDefault();

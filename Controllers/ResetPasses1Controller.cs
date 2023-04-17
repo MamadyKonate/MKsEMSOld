@@ -14,10 +14,12 @@ namespace MKsEMS.Controllers
     public class ResetPasses1Controller : Controller
     {
         private readonly EMSDbContext _context;
+        private readonly CurrentUser2 _currentUser;
 
-        public ResetPasses1Controller(EMSDbContext context)
+        public ResetPasses1Controller(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         //// GET: ResetPasses1
@@ -49,7 +51,7 @@ namespace MKsEMS.Controllers
         // GET: ResetPasses1/Create
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             return View();
@@ -62,7 +64,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Email,CurrentPassword,NewPassword,ReEnterNewPassword")] ResetPass resetPass)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                 TempData["PassMessageSuccess"] = "";
                 TempData["PassMessage"] = "";

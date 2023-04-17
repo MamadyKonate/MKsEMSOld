@@ -13,12 +13,13 @@ namespace MKsEMS.Controllers
     public class JobsController : Controller
     {
         private readonly EMSDbContext _context;
-        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
+        private readonly CurrentUser2 _loggedInUser;
 
 
-        public JobsController(EMSDbContext context)
+        public JobsController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _loggedInUser = currentUser;
         }
 
         // GET: Jobs
@@ -208,7 +209,11 @@ namespace MKsEMS.Controllers
 
         private bool AdminUserIsLoggedIn()
         {
-            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+            if (_loggedInUser.GetLoggedInUser() == null)
+                return false;
+
+
+            if (_loggedInUser.IsLoggedIn() && _loggedInUser.GetLoggedInUser().IsAdmin)
                 return true;
 
             return false;

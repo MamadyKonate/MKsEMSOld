@@ -7,10 +7,8 @@ namespace MKsEMS.ViewModels
         public User GetLoggedInUser { get; set; } = new();
         public bool IsLoggedIn()
         {
-            if (GetLoggedInUser.IsUserLoggedIn)
-                return true;
-
-            return false;
+            return GetLoggedInUser.IsUserLoggedIn;
+                
         }
     }
 }

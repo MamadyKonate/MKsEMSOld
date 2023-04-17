@@ -1,3 +1,4 @@
+using MKsEMS.Controllers;
 using MKsEMS.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,22 @@ builder.Services.AddRazorPages(); //for hot reloading
 
 var connectionString = builder.Configuration.GetConnectionString("EMSDbContext");
 builder.Services.AddDbContext<EMSDbContext>();
+
+//Configuring Session 
+//Then add app.UseSession() - see below
+//Then leverage Session in controller - using dependancy injection
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(240);
+    //options.Cookie.HttpOnly = true;
+    //options.Cookie.IsEssential = true;
+});
+
+//builder.Services.AddSingleton<AllDropDownListData>();
+builder.Services.AddSingleton<CurrentUser2>();
+
 
 var app = builder.Build();
 
@@ -22,6 +39,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseRouting();
 

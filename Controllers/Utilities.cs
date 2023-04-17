@@ -1,10 +1,13 @@
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using Newtonsoft.Json;
 
 namespace MKsEMS.Controllers
 {
+    //TO BE REMOVED - BEING REPLACED BEY CurrentUser2 CLASS
     public static class CurrentUser 
     {
         public static User GetLoggedInUser { get; set; } = new();
@@ -22,43 +25,114 @@ namespace MKsEMS.Controllers
         }
     }
 
+    public  class CurrentUser2
+    {
+        private readonly IHttpContextAccessor _sessionContext;
+        private User _loggedInUser { get; set; } = new();
+        public CurrentUser2(IHttpContextAccessor sessionContext)
+        {
+            _sessionContext = sessionContext;
+        }
+
+        // NOT SURE ANY LONGER WHY USING SESSION IN THIS AFTER ALL.
+        // ESPECIALLY IF INJECTION IS GOING TO BE USED
+        // NOT SURE IF IT MIGHT COME HANDY IN THE LONG RUN - REMAINS TO BE SEEN
+        
+       
+        /// <summary>
+        /// Converts the _user object to a Json string and stores it in the session.
+        /// </summary>
+        /// <param name="user">User Currently logged in</param>
+        public void SetLoggedInUser(User user)
+        {
+            int loggedIn = 0; //for storing bool value into DB
+
+            //Session only takes string or int - objects have to be serialized for storing them
+            string userJSon = JsonConvert.SerializeObject(user);
+            _sessionContext.HttpContext.Session.SetString("_loggedInUser", userJSon);            
+             
+            if (GetLoggedInUser().IsUserLoggedIn)
+                loggedIn = 1;
+                
+            _sessionContext.HttpContext.Session.SetString("userEmail", user.Email);               
+            _sessionContext.HttpContext.Session.SetInt32("loggedInUserInt", loggedIn);
+
+        }
+
+        /// <summary>
+        /// Reconstruct string in Json format from the session back to the User object for processing
+        /// </summary>
+        /// <returns>Reconstructed logged in User</returns>
+        public User GetLoggedInUser ()
+        {
+            if (_sessionContext.HttpContext.Session.GetString("_loggedInUser")!= null){
+
+                string userJSon = _sessionContext.HttpContext.Session.GetString("_loggedInUser");
+                _loggedInUser = JsonConvert.DeserializeObject<User>(userJSon);
+
+                return _loggedInUser;
+            }
+            return null;            
+        }
+
+        /// <summary>
+        /// 
+        /// It will then return true if a _user is logged in.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLoggedIn()
+        {
+            if (GetLoggedInUser() == null) 
+                return false;            
+          
+            
+            return GetLoggedInUser().IsUserLoggedIn;
+        }       
+    }
+
     public static class ViewModelData
     {
         /// <summary>
         /// This is the data that is used to populate the drop down lists.
         /// </summary>
-        static AllDropDownListData alldrop { get; } = new AllDropDownListData(new MKsEMS.Data.EMSDbContext());
+        static AllDropDownListData Alldrop { get; } = new AllDropDownListData(new MKsEMS.Data.EMSDbContext());
         /// <summary>
         /// This method returns a list of bookings stored in the Sqlite databe at any given moment.
         /// </summary>
         /// <returns>A List<Booking> of all bookings</returns>
-        public static List<Leave>? GetBookings() { return alldrop.GeLeaves(); }
+        public static List<Leave>? GetBookings() { return Alldrop.GeLeaves(); }
+        
         /// <summary>
         /// This method returns a list of users stored in the Sqlite databe at any given moment.
         /// </summary>
         /// <returns>A list of all users</returns>
-        public static List<User>? GetUsers() { return alldrop.GetUsers(); }
-        /// <summary>
-        /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
-        /// </summary>
-        public static List<User>? GetFilteredUsers { get; set; } = new();
+        public static List<User>? GetUsers() { return Alldrop.GetUsers(); }
         /// <summary>
         /// The following methods return various data as SelectLists to be displayed in the views.
         /// They are all stored in the Sqlite database.
         /// </summary>
         /// <returns></returns>
-        public static SelectList? GetUsersEmailsSelectList() { return new SelectList(alldrop.GetUsersEmails()); }
-        public static SelectList? GetLeaveTypesSelectList() { return new SelectList(alldrop.GetLeaveTypes()); }
-        public static SelectList? GetJobTitlesSelectList() { return new SelectList(alldrop.GetJobTitles()); }
-        public static SelectList? GetUsersManagerEmailsSelectList() { return new SelectList(alldrop.GetUsersManagerEmails()); }
-        public static SelectList? GeGetLeaveAllowancesSelectList() { return new SelectList(alldrop.GetLeaveAllowances()); }
-
+        public static SelectList? GetUsersEmailsSelectList() { return new SelectList(Alldrop.GetUsersEmails()); }
+        public static SelectList? GetLeaveTypesSelectList() { return new SelectList(Alldrop.GetLeaveTypes()); }
+        public static SelectList? GetJobTitlesSelectList() { return new SelectList(Alldrop.GetJobTitles()); }
+        public static SelectList? GetUsersManagerEmailsSelectList() { return new SelectList(Alldrop.GetUsersManagerEmails()); }
+        public static SelectList? GeGetLeaveAllowancesSelectList() { return new SelectList(Alldrop.GetLeaveAllowances()); }
+    
+        // TO BE MOVED INTO A NON-STATIC CLASS
+        /// <summary>
+        /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
+        /// </summary>
+       // public static List<User>? GetFilteredUsers { get; set; } = new();
+        
+        
     }
+
+
 
 
     public class AllDropDownListData
     {
-        private EMSDbContext? _context { get; set; } = new();
+        private EMSDbContext _context;
 
         /// <summary>
         /// Controller setting up the database context for retrieving from
@@ -187,9 +261,12 @@ namespace MKsEMS.Controllers
             }
 
             return null;
-        }        
-        
-        
+        }
+
+        /// <summary>
+        /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
+        /// </summary>
+        public  List<User> GetFilteredUsers { get; set; } = new();
     }
 
 }

@@ -8,11 +8,14 @@ namespace MKsEMS.Controllers
     public class CompaniesController : Controller
     {
         private readonly EMSDbContext _context;
+        private readonly CurrentUser2 _currentUser;
 
-        public CompaniesController(EMSDbContext context)
+        public CompaniesController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
+        
 
         // GET: Companies
         /// <summary>
@@ -73,7 +76,7 @@ namespace MKsEMS.Controllers
         {
             TempData["AdminMessage"] = "";
 
-            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            if (!_currentUser.GetLoggedInUser().IsAdmin)
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
@@ -99,7 +102,7 @@ namespace MKsEMS.Controllers
         {
             TempData["AdminMessage"] = "";
 
-            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            if (!_currentUser.GetLoggedInUser().IsAdmin)
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
@@ -125,7 +128,7 @@ namespace MKsEMS.Controllers
         {
             TempData["AdminMessage"] = "";
 
-            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            if (!_currentUser.GetLoggedInUser().IsAdmin)
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
@@ -160,7 +163,7 @@ namespace MKsEMS.Controllers
         {
             TempData["AdminMessage"] = "";
 
-            if (!CurrentUser.GetLoggedInUser.IsAdmin)
+            if (!_currentUser.GetLoggedInUser().IsAdmin)
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
@@ -270,8 +273,8 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         private bool GrantedAccess()
         {
-            if (!CurrentUser.IsLoggedIn()
-                && (!CurrentUser.GetLoggedInUser.IsCEO || !CurrentUser.GetLoggedInUser.IsAdmin))
+            if (!_currentUser.IsLoggedIn()
+                && (!_currentUser.GetLoggedInUser().IsCEO || !_currentUser.GetLoggedInUser().IsAdmin))
                 return false;
             
             return true;

@@ -17,10 +17,12 @@ namespace MKsEMS.Controllers
     public class LeaveTypesController : Controller
     {
         private readonly EMSDbContext _context;
+        private  CurrentUser2 _currentUser;
 
-        public LeaveTypesController(EMSDbContext context)
+        public LeaveTypesController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: LeaveTypes
@@ -188,7 +190,10 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         private bool AdminUserIsLoggedIn()
         {
-            if (CurrentUser.IsLoggedIn() && CurrentUser.GetLoggedInUser.IsAdmin)
+            if (_currentUser.GetLoggedInUser() == null)
+                return false;
+            
+            if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
                 return true;
 
             return false;
