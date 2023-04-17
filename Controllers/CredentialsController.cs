@@ -13,10 +13,12 @@ namespace MKsEMS.Controllers
     public class CredentialsController : Controller
     {
         private readonly EMSDbContext _context;
+        private CurrentUser2 _currentUser;
 
-        public CredentialsController(EMSDbContext context)
+        public CredentialsController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: Credentials
@@ -28,14 +30,14 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Index()
         {
             
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                       
             if(_context.Credentials != null)
             { 
-                return CurrentUser.GetLoggedInUser.IsAdmin ? 
+                return _currentUser.GetLoggedInUser().IsAdmin ? 
                         View(await _context.Credentials.ToListAsync()) :
-                        View(await _context.Credentials.Where(c => c.UserEmail == CurrentUser.GetLoggedInUser.Email).ToListAsync());
+                        View(await _context.Credentials.Where(c => c.UserEmail == _currentUser.GetLoggedInUser().Email).ToListAsync());
             }
 
             return Problem("Entity set 'EMSDbContext.Credentials'  is null.");
@@ -49,7 +51,7 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())            
+            if (!_currentUser.IsLoggedIn())            
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
            
             if (id == null || _context.Credentials == null)
@@ -70,7 +72,7 @@ namespace MKsEMS.Controllers
         // GET: Credentials/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id == null || _context.Credentials == null)
@@ -93,7 +95,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,EncPass")] Credentials credentials)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id != credentials.Id)

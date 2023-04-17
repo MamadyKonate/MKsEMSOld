@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using MKsEMS.ViewModels;
 
 namespace MKsEMS.Controllers
 {
     public class ContactsController : Controller
     {
         private readonly EMSDbContext _context;
-        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
-        public ContactsController(EMSDbContext context)
+        private readonly User _loggedInUser = new();
+        public ContactsController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _loggedInUser = currentUser.GetLoggedInUser();
         }
 
         // GET: Contacts
@@ -207,7 +209,10 @@ namespace MKsEMS.Controllers
 
         private bool AdminUserIsLoggedIn()
         {
-            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+            if (_loggedInUser == null)
+                return false;
+           
+            if (_loggedInUser.IsUserLoggedIn && _loggedInUser.IsAdmin)
                 return true;
 
             return false;

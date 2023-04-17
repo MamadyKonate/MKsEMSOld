@@ -1,7 +1,12 @@
 ﻿@inject IHttpContextAccessor contex
+@inject CurrentUser2 user
+
 @using MKsEMS.Data
 
 @using MKsEMS.Controllers
+@{var email = "";
+    if (user.GetLoggedInUser() != null) { email = user.GetLoggedInUser().Email; }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -58,7 +63,7 @@
 
             }
 
-            <h1>Welcome to @company - </h1><h4>@CurrentUser.GetLoggedInUser.Email</h4> - - @contex.HttpContext.Session.GetString("userEmail")
+            <h1>Welcome to @company - </h1><h4>@email</h4>
 
             <br />
              

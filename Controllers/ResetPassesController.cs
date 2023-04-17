@@ -15,10 +15,12 @@ namespace MKsEMS.Controllers
     public class ResetPassesController : Controller
     {
         private readonly EMSDbContext _context;
+        private readonly CurrentUser2 _currentUser;
 
-        public ResetPassesController(EMSDbContext context)
+        public ResetPassesController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         //// GET: ResetPasses

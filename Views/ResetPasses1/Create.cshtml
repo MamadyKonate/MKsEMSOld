@@ -1,4 +1,5 @@
 ﻿@model MKsEMS.ViewModels.ResetPass
+@inject CurrentUser2 currentUser
 @using MKsEMS.Controllers
 <div>
     @{
@@ -27,7 +28,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" readonly value="@CurrentUser.GetLoggedInUser.Email" class="form-control" />
+                <input asp-for="Email" readonly value="@currentUser.GetLoggedInUser().Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">

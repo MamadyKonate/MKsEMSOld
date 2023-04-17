@@ -14,18 +14,20 @@ namespace MKsEMS.Controllers
     public class LeavesController : Controller
     {
         private readonly EMSDbContext _context;
+        private  CurrentUser2 _currentUser;
         private DateTime _startDate = new(), _endDate = new();
         TimeSpan duration;
         int daysOff;
 
-        public LeavesController(EMSDbContext context)
+        public LeavesController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }        
         
         public bool EnoughDayToTake()
         {
-            double remainingDays = CurrentUser.GetLoggedInUser.LeaveEntitement - CurrentUser.GetLoggedInUser.LeaveTaken;
+            double remainingDays = _currentUser.GetLoggedInUser().LeaveEntitement - _currentUser.GetLoggedInUser().LeaveTaken;
 
             duration = _endDate - _startDate;
 
@@ -38,18 +40,18 @@ namespace MKsEMS.Controllers
         // GET: Leaves1
         public async Task<IActionResult> Index()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                         
             if (_context.Credentials != null)
             {
-                return CurrentUser.GetLoggedInUser.IsAdmin ?
+                return _currentUser.GetLoggedInUser().IsAdmin ?
                         View(await _context.Leaves.ToListAsync()) :
 
-                        CurrentUser.GetLoggedInUser.IsManager ?
-                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync()) :
+                        _currentUser.GetLoggedInUser().IsManager ?
+                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync()) :
 
-                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync());
+                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync());
             }
 
             return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
@@ -58,7 +60,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
             
             if (id == null || _context.Leaves == null)
@@ -79,7 +81,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Create
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             return View();
@@ -94,7 +96,7 @@ namespace MKsEMS.Controllers
         {
             TempData["LeaveRqMsg"] = "";
 
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (ModelState.IsValid)
@@ -109,12 +111,12 @@ namespace MKsEMS.Controllers
                     if (_startDate.CompareTo(DateTime.Now.Date)>= 0 && _endDate.CompareTo(DateTime.Now.Date) >= 0) 
                     {                      
                     
-                        CurrentUser.GetLoggedInUser.LeaveTaken += daysOff;
+                        _currentUser.GetLoggedInUser().LeaveTaken += daysOff;
                         leave.LeaveStatus = false;
                         leave.numberOfDays = daysOff;
 
                         _context.Add(leave);
-                        _context.Users.Update(CurrentUser.GetLoggedInUser);
+                        _context.Users.Update(_currentUser.GetLoggedInUser());
 
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));                    
@@ -143,7 +145,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id == null || _context.Leaves == null)
@@ -169,7 +171,7 @@ namespace MKsEMS.Controllers
             _startDate = Convert.ToDateTime(leave.DateFrom);
             _endDate = Convert.ToDateTime(leave.DateTo);
 
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id != leave.Id)
@@ -203,7 +205,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id == null || _context.Leaves == null)
@@ -226,7 +228,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (_context.Leaves == null)

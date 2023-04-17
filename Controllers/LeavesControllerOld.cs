@@ -13,27 +13,28 @@ namespace MKsEMS.Controllers
     public class LeavesControllerOld : Controller
     {
         private readonly EMSDbContext _context;
-        private readonly User _loggedInUSer = CurrentUser.GetLoggedInUser;
-        public LeavesControllerOld(EMSDbContext context)
+        private readonly CurrentUser2 _currentUser;        
+        public LeavesControllerOld(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: Leaves
         public async Task<IActionResult> Index()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                       
             if(_context.Credentials != null)
             { 
-                return CurrentUser.GetLoggedInUser.IsAdmin ? 
+                return _currentUser.GetLoggedInUser().IsAdmin ? 
                         View(await _context.Leaves.ToListAsync()) :
 
-                        CurrentUser.GetLoggedInUser.IsAdmin ? 
-                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync()) :
+                        _currentUser.GetLoggedInUser().IsAdmin ? 
+                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync()) :
 
-                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(CurrentUser.GetLoggedInUser.Email)).ToListAsync());
+                        View(await _context.Leaves.Where(l => l.UserEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync());
             }
 
               return Problem("Entity set 'EMSDbContext.Leaves'  is null.");
@@ -42,7 +43,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
 
@@ -64,7 +65,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves/Create
         public IActionResult Create()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             return View();
@@ -77,7 +78,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (ModelState.IsValid)
@@ -195,7 +196,10 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         private bool AdminUserIsLoggedIn()
         {
-            if (CurrentUser.IsLoggedIn() && CurrentUser.GetLoggedInUser.IsAdmin)
+            if (_currentUser.GetLoggedInUser() == null)
+                return false; 
+            
+            if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
                 return true;
 
             return false;

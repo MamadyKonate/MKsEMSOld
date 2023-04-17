@@ -17,11 +17,12 @@ namespace MKsEMS.Controllers
     {
         private readonly EMSDbContext _context;
         private Credentials _credentials = new();
-        private readonly User _loggedInUser = CurrentUser.GetLoggedInUser;
-        
-        public UsersController(EMSDbContext context)
+        private readonly CurrentUser2 _currentUser ;
+
+        public UsersController(EMSDbContext context, CurrentUser2 currentUser)
         {
-            _context = context;         
+            _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: Users
@@ -31,12 +32,12 @@ namespace MKsEMS.Controllers
         /// <returns>List of Users</returns>
         public async Task<IActionResult> Index()
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                         
-            if(!_loggedInUser.IsAdmin &&
-               !_loggedInUser.IsManager &&
-               !_loggedInUser.IsCEO)
+            if(!_currentUser.GetLoggedInUser().IsAdmin &&
+               !_currentUser.GetLoggedInUser().IsManager &&
+               !_currentUser.GetLoggedInUser().IsCEO)
                 return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
 
             return _context.Users != null ? 
@@ -300,11 +301,15 @@ namespace MKsEMS.Controllers
             if (user != null)
             {
                 _context.Users.Remove(user);
-                
+
+                RemoveContact(user.Email);
+
                 if(userCredentials !=null)
                     _context.Credentials.Remove(userCredentials);
-            }   
+            }
             
+
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -315,11 +320,23 @@ namespace MKsEMS.Controllers
         /// <returns>true or false</returns>
         private bool AdminUserIsLoggedIn()
         {
-            if (CurrentUser.IsLoggedIn() && _loggedInUser.IsAdmin)
+            if (_currentUser.GetLoggedInUser() == null)
+                return false;
+            
+            if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
                 return true;
 
             return false;
         }
+
+        private void RemoveContact(string email) 
+        {
+            var contact = _context.Contacts.Where(c => c.UserEmail == email);
+            
+            if (_context.Contacts.Where(c => c.UserEmail == email) != null)
+                _context.Remove(contact);
+        }
+
 
         private bool UserExists(int id)
         {

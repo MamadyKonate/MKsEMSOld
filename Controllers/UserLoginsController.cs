@@ -9,6 +9,7 @@ namespace MKsEMS.Controllers
     {
         private readonly EMSDbContext _context;
         private CurrentUser2 _loggedInUser;
+        private readonly AllDropDownListData _allDropData;
         private static int _incorrectPasswordEntered;
 
 
@@ -16,6 +17,7 @@ namespace MKsEMS.Controllers
         {
             _context = context;
             _loggedInUser = loggedInUser;
+            _allDropData = new (context);
         }
         
         
@@ -30,8 +32,8 @@ namespace MKsEMS.Controllers
             //Ensure Current user is not set to IsLoggedIn - in case the HTTP Post is comming from Log out
             try
             {
-                _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;                
-                CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
+                if (_loggedInUser.GetLoggedInUser() != null)                    
+                _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;   
                 TempData["Message"] = "Please login to continue";
             }
             catch { return View(); }
@@ -74,13 +76,10 @@ namespace MKsEMS.Controllers
 
                         //Putting the logged in user in the session in CurrentUser2 class
                         _loggedInUser.SetLoggedInUser(theUser);
-                        
-                        CurrentUser.GetLoggedInUser = theUser;
-                        _incorrectPasswordEntered = 0;
 
-                        TempData["email"] = _loggedInUser.GetLoggedInUser().Email;
+                        _incorrectPasswordEntered = 0;                        
                         
-                        //ViewModelData.GetFilteredUsers = ViewModelData.GetUsers();
+                        _allDropData.GetFilteredUsers = ViewModelData.GetUsers();
 
                         if (theUser.IsAdmin || theUser.IsManager)
                         {
@@ -93,9 +92,7 @@ namespace MKsEMS.Controllers
                     }
                     else
                     {
-                        _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;
-                        
-                        CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
+                        _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;                        
                         TempData["Message"] = "Incorrect Username or Password entered " + (_incorrectPasswordEntered += 1) + " time(s).";
                         return View();
                     }
@@ -112,7 +109,7 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         public IActionResult Logout()
         {
-            CurrentUser.GetLoggedInUser.IsUserLoggedIn = false;
+            _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;            
             return View("Index");
         }
 
