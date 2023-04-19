@@ -7,23 +7,23 @@ using Newtonsoft.Json;
 
 namespace MKsEMS.Controllers
 {
-    //TO BE REMOVED - BEING REPLACED BEY CurrentUser2 CLASS
-    public static class CurrentUser 
-    {
-        public static User GetLoggedInUser { get; set; } = new();
+    ////TO BE REMOVED - BEING REPLACED BEY CurrentUser2 CLASS
+    //public static class CurrentUser 
+    //{
+    //    public static User GetLoggedInUser { get; set; } = new();
 
-        /// <summary>
-        /// Returns true if a _user is logged in.
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsLoggedIn()
-        {
-            if (GetLoggedInUser.IsUserLoggedIn)
-                return true;
+    //    /// <summary>
+    //    /// Returns true if a _user is logged in.
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public static bool IsLoggedIn()
+    //    {
+    //        if (GetLoggedInUser.IsUserLoggedIn)
+    //            return true;
 
-            return false;
-        }
-    }
+    //        return false;
+    //    }
+    //}
 
     public  class CurrentUser2
     {
@@ -122,13 +122,9 @@ namespace MKsEMS.Controllers
         /// <summary>
         /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
         /// </summary>
-       // public static List<User>? GetFilteredUsers { get; set; } = new();
-        
+       // public static List<User>? GetFilteredUsers { get; set; } = new();        
         
     }
-
-
-
 
     public class AllDropDownListData
     {

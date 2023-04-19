@@ -49,7 +49,7 @@ namespace MKsEMS.Controllers
         //Any logged in user should be able to get at least his/her own detail
         public async Task<IActionResult> Details(int? id)
         {
-            if (!CurrentUser.IsLoggedIn())
+            if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
                         
             if (id == null || _context.Users == null)
@@ -302,7 +302,7 @@ namespace MKsEMS.Controllers
             {
                 _context.Users.Remove(user);
 
-                RemoveContact(user.Email);
+                RemoveContact(user.Email);  //will only remove associated email if it exist
 
                 if(userCredentials !=null)
                     _context.Credentials.Remove(userCredentials);
@@ -322,18 +322,20 @@ namespace MKsEMS.Controllers
         {
             if (_currentUser.GetLoggedInUser() == null)
                 return false;
-            
-            if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
-                return true;
 
-            return false;
+            return _currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin;
+
+            //if (_currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsAdmin)
+            //    return true;
+
+            //return false;
         }
 
         private void RemoveContact(string email) 
         {
-            var contact = _context.Contacts.Where(c => c.UserEmail == email);
-            
-            if (_context.Contacts.Where(c => c.UserEmail == email) != null)
+            Contact contact = _context.Contacts.Where(c => c.UserEmail == email).FirstOrDefault();
+
+            if (contact != null)
                 _context.Remove(contact);
         }
 
