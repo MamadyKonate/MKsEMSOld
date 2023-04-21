@@ -13,7 +13,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["JobTitle"] - MKsEMS</title>
+    <title>@ViewData["JobTitle"] MKsEMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MKsEMS.styles.css" asp-append-version="true" />
@@ -29,6 +29,11 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+
+                        <li class="nav-item">
+                            <img src="~/images/mksems.png" class="img-fluid" height="50" width="50" alt="Responsive image">
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Leaves" asp-action="Index">My Leaves</a>
                         </li>
@@ -63,7 +68,7 @@
 
             }
 
-            <h1>Welcome to @company - </h1><h4>@email</h4>
+            <h1>Welcome to @company </h1><h4>@email</h4>
 
             <br />
              

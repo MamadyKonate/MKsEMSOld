@@ -98,6 +98,12 @@ namespace MKsEMS.Controllers
                     }
 
                 }
+                else //no user found in the system with the same email as entered
+                {
+                    _loggedInUser.GetLoggedInUser().IsUserLoggedIn = false;
+                    TempData["Message"] = "Incorrect Username or Password entered " + (_incorrectPasswordEntered += 1) + " time(s).";
+                    return View();
+                }
             }
 
             return View("Index");
