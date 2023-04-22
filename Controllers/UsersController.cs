@@ -34,12 +34,24 @@ namespace MKsEMS.Controllers
         {
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
-                        
-            if(!_currentUser.GetLoggedInUser().IsAdmin &&
-               !_currentUser.GetLoggedInUser().IsManager &&
-               !_currentUser.GetLoggedInUser().IsCEO)
-                return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
+ 
+  //##############################################################################################          
 
+    //        IT'S PROBABLY BEST HANDLING PRIVILEGES OF ACCESSING WHAT USES BY
+    //        FILTERING DOWN TO INDIVIDUALS PRIVILEGES.
+    //        LOGGED IN USER SHOULD ALWAYS SEE THEIR OWN ACCOUNT.
+    //        
+            
+            //if(!_currentUser.GetLoggedInUser().IsAdmin &&
+            //   !_currentUser.GetLoggedInUser().IsManager &&
+            //   !_currentUser.GetLoggedInUser().IsCEO)
+            //    return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
+
+
+
+  //##############################################################################################
+            
+            
             return _context.Users != null ? 
                           View(await _context.Users.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Users'  is null.");

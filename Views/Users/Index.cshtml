@@ -1,10 +1,14 @@
 ﻿@model IEnumerable<MKsEMS.Models.User>
+@using MKsEMS.Controllers
+@inject CurrentUser2 _loggedInUser;
 
 @{
     ViewData["JobTitle"] = "Index";
+
+
 }
 
-<h1>Index</h1>
+<h1>User accounts page</h1>
 
 <div>
     @{
@@ -26,7 +30,17 @@
     }
 </div>
 <p>
-    <a asp-action="Create">Create New</a>
+    @{
+        if (_loggedInUser.GetLoggedInUser().IsAdmin)
+        {
+            <a asp-action="Create">Create a new User account</a>
+        }
+        else
+        {
+            <a asp-action="Edit" asp-route-id="@_loggedInUser.GetLoggedInUser().Id"> Edit your account</a>
+      }
+
+    }
 </p>
 <table class="table">
     <thead>
@@ -115,11 +129,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.IsCEO)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            @{
+                if (_loggedInUser.GetLoggedInUser().IsAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            }
+            
         </tr>
 }
     </tbody>
