@@ -22,11 +22,19 @@
         {
             <div class="alert alert-success">
                 <h5>
-                    The user has successfully been created, please inform the relevant personnel with below information.  <br />
+                    
                     @TempData["CreateMessageSuccess"]
                 </h5> 
             </div>
         }
+        //if (TempData["AdminMessage"] != null)
+        //{
+        //    <div class="alert alert-danger">
+        //        <h5>                   
+        //            @TempData["AdminMessage"]
+        //        </h5>
+        //    </div>
+        //}
     }
 </div>
 <p>
@@ -37,7 +45,7 @@
         }
         else
         {
-            <a asp-action="Edit" asp-route-id="@_loggedInUser.GetLoggedInUser().Id"> Edit your account</a>
+            <a asp-controller="Leaves" asp-action="Create"> Make a Leave Request </a>
       }
 
     }
@@ -69,21 +77,29 @@
             <th>
                 @Html.DisplayNameFor(model => model.LeaveTaken)
             </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.SickLeaveTaken)
-            </th>           
-            <th>
-                @Html.DisplayNameFor(model => model.IsUserLoggedIn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAdmin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsManager)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsCEO)
-            </th>
+            </th>   
+
+            @{
+                if (_loggedInUser.GetLoggedInUser().IsAdmin)
+                {                             
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsUserLoggedIn)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsAdmin)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsManager)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsCEO)
+                    </th>
+                }
+            }
+            
             <th></th>
         </tr>
     </thead>
@@ -117,28 +133,45 @@
             <td>
                 @Html.DisplayFor(modelItem => item.SickLeaveTaken)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsUserLoggedIn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAdmin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsManager)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsCEO)
-            </td>
+
             @{
                 if (_loggedInUser.GetLoggedInUser().IsAdmin)
                 {
                     <td>
+                        @Html.DisplayFor(modelItem => item.IsAdmin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsManager)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsCEO)
+                    </td>
+            
+                    <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                         <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        @{
+                            if (!_loggedInUser.GetLoggedInUser().IsAdmin)
+                            {
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                            }
+                        }
+                
                     </td>
                 }
             }
+                @{
+                    <td>
+                
+                        @{
+                            if (!_loggedInUser.GetLoggedInUser().IsAdmin)
+                            {
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            }
+                        }
+                    </td>
+                }
             
         </tr>
 }

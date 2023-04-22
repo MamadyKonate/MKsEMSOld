@@ -92,7 +92,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
         {
             TempData["LeaveRqMsg"] = "";
 
@@ -109,10 +109,15 @@ namespace MKsEMS.Controllers
                     //Chekcing valid start date 
                     
                     if (_startDate.CompareTo(DateTime.Now.Date)>= 0 && _endDate.CompareTo(DateTime.Now.Date) >= 0) 
-                    {                      
-                    
+                    {
+                        //Leave Status
+                        //stat.Add("Pending");
+                        //stat.Add("Approved");
+                        //stat.Add("Denied");
+                        
                         _currentUser.GetLoggedInUser().LeaveTaken += daysOff;
                         leave.LeaveStatus = false;
+                        leave.Status = "Pending";
                         leave.numberOfDays = daysOff;
 
                         _context.Add(leave);
@@ -166,7 +171,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
         {
             _startDate = Convert.ToDateTime(leave.DateFrom);
             _endDate = Convert.ToDateTime(leave.DateTo);

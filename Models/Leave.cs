@@ -19,6 +19,7 @@ namespace MKsEMS.Models
         public int? numberOfDays { get; set; }
         public int Taken { get; set; }
         public string LeaveType { get; set; }
+        public string Status { get; set; }
         public bool LeaveStatus { get; set; }
         public string? DenialReason { get; set; }
     }

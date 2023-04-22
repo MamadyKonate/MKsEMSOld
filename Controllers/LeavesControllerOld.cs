@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,8 @@ namespace MKsEMS.Controllers
     public class LeavesControllerOld : Controller
     {
         private readonly EMSDbContext _context;
-        private readonly CurrentUser2 _currentUser;        
+        private readonly CurrentUser2 _currentUser;
+        
         public LeavesControllerOld(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
@@ -76,7 +78,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
         {
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
@@ -114,7 +116,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
         {
             if (!AdminUserIsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
@@ -189,6 +191,31 @@ namespace MKsEMS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
+        private IActionResult ProcessLeaves(Leave leave)
+        {
+            if (_currentUser.GetLoggedInUser() == null &&
+                _currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsManager)
+            {
+                switch (leave.Status)
+                {
+                    case "Pending" :
+                        leave.Status = "Pending";                        
+                            break;
+                    case "Approved":
+                        leave.Status = "Approved";
+                        break;
+                    case "Denied":
+                        leave.Status = "Denied";
+                        break;
+                }
+
+                _context.Leaves.Add(leave);
+                _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index","Leaves");            
+        }
+            
 
         /// <summary>
         /// Checking if logged in user is an Administrator and logged in

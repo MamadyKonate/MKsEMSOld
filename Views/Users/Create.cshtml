@@ -9,10 +9,14 @@
     {
         <label class="text-danger">@TempData["UserExistError"]</label>
     }
+    if (TempData["CreateMessageFail"] != null)
+    {
+        <label class="text-danger">@TempData["CreateMessageFail"]</label>
+    }
 }
 
 <h1>@ViewData["JobTitle"]</h1>
-<h4>User</h4>
+<h4>User </h4>
 <hr />
 <div class="row">
     <div class="col-md-4">

@@ -30,7 +30,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
             return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
@@ -46,11 +46,8 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
-
-            if (!GrantedAccess())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
             if (id == null || _context.Companies == null)
             {
@@ -80,10 +77,8 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
-            }
-            if (!GrantedAccess())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
+            }           
 
             return View();
         }
@@ -106,7 +101,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (ModelState.IsValid)
@@ -132,7 +127,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); 
             }
 
             if (id == null || _context.Companies == null)
@@ -167,7 +162,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (id != company.Id)
@@ -209,9 +204,9 @@ namespace MKsEMS.Controllers
         {
             TempData["CompanyMsg"] = "";
             if (!GrantedAccess())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
-            
-            
+                return RedirectToAction("Index", "Users");
+
+
 
             if (id == null || _context.Companies == null)
             {
@@ -225,7 +220,7 @@ namespace MKsEMS.Controllers
             
             if(companyCount < 2 && !company.IsToBeDeleted)
             {
-                TempData["CompanyMsg"] = "There in only one Active Company on the system.  \n Please create the Company Details record you whish to use, you can then delete this on.";
+                TempData["CompanyMsg"] = "There in only one Active Company on the system. Please create the Company Details record you whish to use, you can then delete this on.";
                 return RedirectToAction(nameof(Index));                
             }
 
@@ -251,7 +246,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!GrantedAccess())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
 
             if (_context.Companies == null)
             {
