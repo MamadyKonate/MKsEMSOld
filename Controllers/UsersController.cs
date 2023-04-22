@@ -18,11 +18,13 @@ namespace MKsEMS.Controllers
         private readonly EMSDbContext _context;
         private Credentials _credentials = new();
         private readonly CurrentUser2 _currentUser ;
+        private AllDropDownListData _filteredObjects;
 
         public UsersController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
             _currentUser = currentUser;
+            _filteredObjects = new AllDropDownListData(_context);
         }
 
         // GET: Users
@@ -34,14 +36,27 @@ namespace MKsEMS.Controllers
         {
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
- 
-  //##############################################################################################          
 
-    //        IT'S PROBABLY BEST HANDLING PRIVILEGES OF ACCESSING WHAT USES BY
-    //        FILTERING DOWN TO INDIVIDUALS PRIVILEGES.
-    //        LOGGED IN USER SHOULD ALWAYS SEE THEIR OWN ACCOUNT.
-    //        
+
+
+            if (!_currentUser.GetLoggedInUser().IsAdmin &&
+               !_currentUser.GetLoggedInUser().IsManager &&
+               !_currentUser.GetLoggedInUser().IsCEO)
+            {
+                _filteredObjects.GetFilteredUsers = _context.Users.Where(u => u.Email == _currentUser.GetLoggedInUser().Email).ToList();
+
+                return View(_filteredObjects.GetFilteredUsers);//User is logged in with least privilege
+            }
+
             
+
+            //##############################################################################################          
+
+            //        IT'S PROBABLY BEST HANDLING PRIVILEGES OF ACCESSING WHAT USES BY
+            //        FILTERING DOWN TO INDIVIDUALS PRIVILEGES.
+            //        LOGGED IN USER SHOULD ALWAYS SEE THEIR OWN ACCOUNT.
+            //        
+
             //if(!_currentUser.GetLoggedInUser().IsAdmin &&
             //   !_currentUser.GetLoggedInUser().IsManager &&
             //   !_currentUser.GetLoggedInUser().IsCEO)
@@ -49,9 +64,9 @@ namespace MKsEMS.Controllers
 
 
 
-  //##############################################################################################
-            
-            
+            //##############################################################################################
+
+
             return _context.Users != null ? 
                           View(await _context.Users.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Users'  is null.");
