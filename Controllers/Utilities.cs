@@ -61,6 +61,7 @@ namespace MKsEMS.Controllers
 
         /// <summary>
         /// Reconstruct string in Json format from the session back to the User object for processing
+        /// If the user is not logged in, a null reference is returned.
         /// </summary>
         /// <returns>Reconstructed logged in User</returns>
         public User GetLoggedInUser ()

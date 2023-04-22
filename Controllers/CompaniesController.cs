@@ -200,14 +200,18 @@ namespace MKsEMS.Controllers
 
         // GET: Companies/Delete/5
         /// <summary>
-        ///  Only Administrators, and the CEO are allowed to creat Company
+        ///  Only Administrators, and the CEO are allowed to delete Company
+        ///  There always has be at least one active company
         /// </summary>
         /// <param name="id">Id of the selected Company to be deleted</param>
         /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
+            TempData["CompanyMsg"] = "";
             if (!GrantedAccess())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+            
+            
 
             if (id == null || _context.Companies == null)
             {
@@ -216,9 +220,18 @@ namespace MKsEMS.Controllers
 
             var company = await _context.Companies
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
+           int companyCount = _context.Companies.ToList().Where(c => !c.IsToBeDeleted).Count();
+            
+            if(companyCount < 2 && !company.IsToBeDeleted)
+            {
+                TempData["CompanyMsg"] = "There in only one Active Company on the system.  \n Please create the Company Details record you whish to use, you can then delete this on.";
+                return RedirectToAction(nameof(Index));                
+            }
+
             if (company == null)
             {
-                return NotFound();
+            return NotFound();
             }
 
             return View(company);

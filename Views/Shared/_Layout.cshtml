@@ -1,11 +1,27 @@
 ﻿@inject IHttpContextAccessor contex
 @inject CurrentUser2 user
+@*@inject EMSDbContext _context*@
 
 @using MKsEMS.Data
 
 @using MKsEMS.Controllers
-@{var email = "";
+@{
+    var email = "";
     if (user.GetLoggedInUser() != null) { email = user.GetLoggedInUser().Email; }
+
+    ViewData["Title"] = "Index";
+    var welcomeMsg = "Welcome ";
+    var _context = new EMSDbContext();
+    var comp = _context.Companies.ToList().Where(c => !c.IsToBeDeleted).FirstOrDefault();
+
+    if (comp != null)    
+        welcomeMsg = String.Concat(welcomeMsg, "to ", comp.Name);
+
+    
+    if (TempData["CompanyMsg"] != null)       
+        welcomeMsg = TempData["CompanyMsg"].ToString();
+        //welcomeMsg += "- Please ensure there is an active Conpany Details set up!";
+    
 }
 
 <!DOCTYPE html>
@@ -59,16 +75,26 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
-            
-
+        <main role="main" class="pb-3"> 
             @{
-                ViewData["Title"] = "Index";
-                var company = new EMSDbContext().Companies.Where(c => !c.IsToBeDeleted).ToList().ElementAt(0).Name;
+                if (TempData["CompanyMsg"] != null)
+                {
+                    <div class="text-danger">
+                        <h1>
+                            @welcomeMsg
+                        </h1>
 
-            }
+                    </div>
+                }
+                else
+                {
+                     <h1>
+                        @welcomeMsg
+                    </h1>
+                }                               
+           }
 
-            <h1>Welcome to @company </h1><h4>@email</h4>
+            <h4>@email</h4>
 
             <br />
              
