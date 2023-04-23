@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using MKsEMS.Data;
 using MKsEMS.Models;
 using MKsEMS.Services;
+using MKsEMS.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MKsEMS.Controllers
@@ -25,8 +26,9 @@ namespace MKsEMS.Controllers
         {
             _context = context;
             _currentUser = currentUser;
-            _filteredObjects = new AllDropDownListData(_context);
+            _filteredObjects = new AllDropDownListData(context);     
         }
+        
 
         // GET: Users
         /// <summary>
@@ -49,13 +51,15 @@ namespace MKsEMS.Controllers
             if(_context.Users.ToList() == null)
                 return  Problem("Entity set 'EMSDbContext.Users'  is null.");
 
-            return _currentUser.GetLoggedInUser().IsAdmin ?
-                        View(await _context.Users.ToListAsync()) :
 
+            _filteredObjects.GetFilteredUsers =  _currentUser.GetLoggedInUser().IsAdmin ?
+                        await _context.Users.ToListAsync() :
+                        
                         _currentUser.GetLoggedInUser().IsManager ?
-                        View(await _context.Users.Where(u => u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync()) :
+                       await _context.Users.Where(u => u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync() :
 
-                        View(await _context.Users.Where(u => u.Email.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync());            
+                       await _context.Users.Where(u => u.Email.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync();
+            return  View(_filteredObjects.GetFilteredUsers);
         }
 
         // GET: Users/Details/5
@@ -362,6 +366,58 @@ namespace MKsEMS.Controllers
 
             if (contact != null)
                 _context.Remove(contact);
+        }
+
+        /// <summary>
+        /// Search functionality for finding any users with name containsing the parameter.
+        /// Either in firstname or last name.
+        /// </summary>
+        /// <param name="nameToFind">Name to find</param>
+        /// <returns></returns>
+        [HttpPost, ActionName("FindByName")]
+        public async Task<IActionResult> FindByName(string nameToFind)
+        {
+            if (_currentUser.GetLoggedInUser() == null)                
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+
+            if (nameToFind != null)
+                _filteredObjects.GetFilteredUsers = (from us in _context.Users
+                                                  select us).Where(us => string.Concat(us.Surname.ToLower(), us.FirstName.ToLower())
+                                                                                      .Contains(nameToFind.ToLower())).ToList();
+
+            return View("Index", _filteredObjects.GetFilteredUsers);
+        }
+
+        public async Task<IActionResult> FindByJobTitle(string TitleToFind)
+        {
+            if (_currentUser.GetLoggedInUser() == null)
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+
+            if (TitleToFind != null)
+                _filteredObjects.GetFilteredUsers = (from us in _filteredObjects.GetFilteredUsers
+                                                     select us).Where(us => us.JobTitle.ToLower().Contains(TitleToFind.ToLower())).ToList();
+
+            return View("Index", _filteredObjects.GetFilteredUsers);
+        }
+
+
+        /// <summary>
+        /// Filterng User records based on their Gender or Handicap range
+        /// </summary>
+        /// <param name="criteria">Either Gender or Handicap range</param>
+        /// <returns></returns>
+        [HttpPost, ActionName("Filters")]
+        public async Task<IActionResult> Filters(string criteria)
+        {           
+
+            if (_filteredObjects.GetFilteredUsers == null)
+            {
+                return Problem("There is no data in the User table.");
+            }
+
+            return View("Index",_filteredObjects.GetFilteredUsers);
         }
 
 
