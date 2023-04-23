@@ -44,6 +44,8 @@ namespace MKsEMS.Controllers
             if (leaveType != "Annual Leave") //we are only interested in checking annual leave left for the user
                 return true;
             
+            daysOff = duration.Days + 1;  //this is needed otherwise requested date range will be off by -1 day, 
+
             return remainingDays >= daysOff;
         }
 
