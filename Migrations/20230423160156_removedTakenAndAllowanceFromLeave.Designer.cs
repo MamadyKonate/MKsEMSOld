@@ -3,6 +3,7 @@ using System;
 using MKsEMS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MKsEMS.Migrations
 {
     [DbContext(typeof(EMSDbContext))]
-    partial class EMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230423160156_removedTakenAndAllowanceFromLeave")]
+    partial class removedTakenAndAllowanceFromLeave
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -147,6 +150,9 @@ namespace MKsEMS.Migrations
 
                     b.Property<string>("DenialReason")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("LeaveStatus")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LeaveType")
                         .IsRequired()

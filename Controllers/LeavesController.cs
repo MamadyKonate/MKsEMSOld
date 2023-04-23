@@ -29,8 +29,8 @@ namespace MKsEMS.Controllers
 
         public bool EnoughDaysRemained(string userEmail, string leaveType)
         {      
-            if (leaveType != "Annual Leave") //we are only interested in checking annual leave left for the user
-                return true;
+            
+            
 
             User user = new();
             user = _context.Users.Where(u => u.Email == userEmail).First();
@@ -39,6 +39,11 @@ namespace MKsEMS.Controllers
 
             duration = _endDate - _startDate;
 
+            daysOff = duration.Days + 1;  //this is needed otherwise requested date range will be off by -1 day, 
+                        
+            if (leaveType != "Annual Leave") //we are only interested in checking annual leave left for the user
+                return true;
+            
             daysOff = duration.Days + 1;  //this is needed otherwise requested date range will be off by -1 day, 
 
             return remainingDays >= daysOff;
@@ -67,6 +72,8 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            TempData["LeaveRqMsg"] = "";
+
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
             
@@ -88,6 +95,8 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Create
         public IActionResult Create()
         {
+            TempData["LeaveRqMsg"] = "";
+
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
@@ -99,7 +108,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,LeaveType,Status,DenialReason")] Leave leave)
         {
             TempData["LeaveRqMsg"] = "";
 
@@ -115,19 +124,17 @@ namespace MKsEMS.Controllers
                 {
                     //Chekcing valid start date 
                     
-                    if (_startDate.CompareTo(DateTime.Now.Date)>= 0 
-                        && _endDate.CompareTo(DateTime.Now.Date) >= 0
+                    if ((_startDate.CompareTo(DateTime.Now.Date)>= 0 
+                        && _endDate.CompareTo(DateTime.Now.Date) >= 0)
                         && _startDate.Date <= _endDate.Date) 
-                    {
-                        leave.LeaveStatus = false;
+                    {                        
                         leave.Status = "Pending";                        
 
                         _context.Add(leave);
                         _context.Users.Update(_currentUser.GetLoggedInUser());
 
                         await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));                    
-                    
+                        return RedirectToAction(nameof(Index));  
                     }                   
                    
                     TempData["LeaveRqMsg"] = "Leave start date must not be later than leave end date, and they cannot be in the past!  Please tray again";
@@ -151,6 +158,7 @@ namespace MKsEMS.Controllers
         // GET: Leaves1/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            TempData["LeaveRqMsg"] = "";
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
@@ -172,7 +180,7 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,Allowance,Taken,LeaveType,LeaveStatus, Status,DenialReason")] Leave leave)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,LeaveType, Status,DenialReason")] Leave leave)
         {           
             TempData["LeaveRqMsg"] = "";
 
@@ -197,41 +205,70 @@ namespace MKsEMS.Controllers
                     //Chekcing valid start date 
                     if (_startDate.CompareTo(DateTime.Now.Date) >= 0
                         && _endDate.CompareTo(DateTime.Now.Date) >= 0
-                        && _startDate.Date !> _endDate.Date)
-                    {   
-                        leave.Status = "Pending";
-                    }
-                }
-
-                try
-                {
-                    _context.Update(leave);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LeaveExists(leave.Id))
+                        && _startDate.Date <= _endDate.Date)
                     {
-                        return NotFound();
+                        leave.Status = "Pending";
                     }
                     else
                     {
-                        throw;
+                        TempData["LeaveRqMsg"] = "Leave request failed to be edited. Please check date range is valid";
+                        return View(leave);
                     }
-                }
                 
-                TempData["LeaveRqMsg"] = "Leave request was successfully edited.";
 
-                return RedirectToAction(nameof(Index));
+                    try
+                    {
+                        _context.Update(leave);
+                        await _context.SaveChangesAsync();
+
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!LeaveExists(leave.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    TempData["LeaveRqMsg"] = "Leave request was successfully edited.";
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
             TempData["LeaveRqMsg"] = "Leave request failed to be edited.";
 
             return View(leave);
         }
 
+        public async Task<IActionResult> ProcessLeave(int? id)
+        {
+
+            TempData["LeaveRqMsg"] = "";
+            if (!_currentUser.IsLoggedIn())
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+
+            if (id == null || _context.Leaves == null)
+            {
+                return NotFound();
+            }
+
+            var leave = await _context.Leaves.FindAsync(id);
+            if (leave == null)
+            {
+                return NotFound();
+            }
+            return View(leave);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> ProcessLeaveRequest(Leave leave)
-        {  
+        public async Task<IActionResult> ProcessLeave(int id, [Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,LeaveType, Status,DenialReason")] Leave leave)
+        {
+            TempData["LeaveRqMsg"] = "";
+
             User user = new();
             
             _startDate = leave.DateFrom.ToDateTime(new TimeOnly());
@@ -242,17 +279,16 @@ namespace MKsEMS.Controllers
                 //Chekcing the leave date range validity
                 if (_startDate.CompareTo(DateTime.Now.Date) >= 0
                     && _endDate.CompareTo(DateTime.Now.Date) >= 0
-                    && _startDate.Date !> _endDate.Date)
+                    && _startDate.Date <= _endDate.Date)
                 {
                     
                     leave.numberOfDays = daysOff;
                     user = _context.Users.Where(u => u.Email == leave.UserEmail).First();
+                    
 
                     //Approved will be replaced with Ennum value
                     if (leave.Status == "Approved")
-                    {                        
-                        leave.LeaveStatus = true;                        
-                        
+                    {         
                         string annualLeave = _context.LeaveTypes.First().Name; //Annual Leave is the first element in LeaveTypes table
 
                         if (leave.LeaveType == annualLeave)
@@ -260,12 +296,12 @@ namespace MKsEMS.Controllers
 
                         if (leave.LeaveType == "Sick Leave")
                             user.SickLeaveTaken += daysOff; //and if the leave is an sick leave, we update SickLeaveTaken in User table                   
-
-                        TempData["LeaveApproved"] = $"Leave reqest for {_startDate} to {_endDate} has been approved.";
+                        
+                        TempData["LeaveRqMsg"] = $"Leave reqest for {_startDate} to {_endDate} has been approved.";
                     }
                     if (leave.Status == "Denied")
                     {                                                
-                        TempData["LeaveDenied"] = $"Leave reqest for {_startDate} to {_endDate} has been declined.";
+                        TempData["LeaveRqMsg"] = $"Leave reqest for {_startDate} to {_endDate} has been declined.";
                     }
                     
                     try
