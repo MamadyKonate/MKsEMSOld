@@ -42,8 +42,11 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword([Bind("Id,Email,CurrentPassword,NewPassword,ReEnterNewPassword")] ResetPass resetPass)
         {
+            TempData["NoMatchingPass"] = "";
+
             if (ModelState.IsValid)
             {
+
                 //return _context.ResetPasses != null ?
                 //          View(await _context.ResetPasses.ToListAsync()) :
                 //          Problem("Entity set 'EMSDbContext.ResetPasses'  is null.");

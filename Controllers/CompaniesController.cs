@@ -30,7 +30,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
 
-                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
             }
             return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
@@ -46,7 +46,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator, or the CEO";
 
-                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
             }
 
             if (id == null || _context.Companies == null)
@@ -77,7 +77,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
             }           
 
             return View();
@@ -101,7 +101,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
             }
 
             if (ModelState.IsValid)
@@ -127,7 +127,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "Users"); 
+                return RedirectToAction("Index", "UserLogins"); 
             }
 
             if (id == null || _context.Companies == null)
@@ -162,7 +162,7 @@ namespace MKsEMS.Controllers
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
 
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
             }
 
             if (id != company.Id)
@@ -204,7 +204,7 @@ namespace MKsEMS.Controllers
         {
             TempData["CompanyMsg"] = "";
             if (!GrantedAccess())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
 
 
@@ -246,7 +246,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!GrantedAccess())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogings");
 
             if (_context.Companies == null)
             {
@@ -281,10 +281,13 @@ namespace MKsEMS.Controllers
         /// <returns></returns>
         private bool GrantedAccess()
         {
-            if (!_currentUser.IsLoggedIn()
-                && (!_currentUser.GetLoggedInUser().IsCEO || !_currentUser.GetLoggedInUser().IsAdmin))
+            if (_currentUser.GetLoggedInUser() != null){ //ensure logged in user is not null first before checking its properties
+                
+                if (!_currentUser.GetLoggedInUser().IsCEO || !_currentUser.GetLoggedInUser().IsAdmin)
                 return false;
-            
+
+            }
+                           
             return true;
         }
     }
