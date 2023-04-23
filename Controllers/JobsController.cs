@@ -28,7 +28,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             return _context.Jobs != null ? 
@@ -42,7 +42,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (id == null || _context.Jobs == null)
@@ -66,7 +66,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             return View();
@@ -82,7 +82,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (id == null || _context.Jobs == null)
@@ -126,7 +126,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (id != job.Id)
@@ -163,7 +163,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (id == null || _context.Jobs == null)
@@ -189,7 +189,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users");
             }
 
             if (_context.Jobs == null)

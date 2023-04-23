@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using MKsEMS.Data;
 using MKsEMS.Models;
 using MKsEMS.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MKsEMS.Controllers
 {
@@ -18,31 +19,43 @@ namespace MKsEMS.Controllers
         private readonly EMSDbContext _context;
         private Credentials _credentials = new();
         private readonly CurrentUser2 _currentUser ;
+        private AllDropDownListData _filteredObjects;
 
         public UsersController(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
             _currentUser = currentUser;
+            _filteredObjects = new AllDropDownListData(_context);
         }
 
         // GET: Users
         /// <summary>
-        /// Getting Users for Administrators, Managers and CEO only
+        /// Getting Users for User
+        /// Administrators and CEO have access to all users in the company, 
+        /// Managers have access to only and all users for whom s/he is the manager of
+        /// Any other User has access to only his/her account        /// 
         /// </summary>
         /// <returns>List of Users</returns>
         public async Task<IActionResult> Index()
         {
-            if (!_currentUser.IsLoggedIn())
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
-                        
-            if(!_currentUser.GetLoggedInUser().IsAdmin &&
-               !_currentUser.GetLoggedInUser().IsManager &&
-               !_currentUser.GetLoggedInUser().IsCEO)
-                return RedirectToAction("Index", "Leaves"); //User is logged in with least privilege
+            TempData["AdminMessage"] = "";
 
-            return _context.Users != null ? 
-                          View(await _context.Users.ToListAsync()) :
-                          Problem("Entity set 'EMSDbContext.Users'  is null.");
+            if (!_currentUser.IsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login to proceed";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;            
+            }               
+            
+            if(_context.Users.ToList() == null)
+                return  Problem("Entity set 'EMSDbContext.Users'  is null.");
+
+            return _currentUser.GetLoggedInUser().IsAdmin ?
+                        View(await _context.Users.ToListAsync()) :
+
+                        _currentUser.GetLoggedInUser().IsManager ?
+                        View(await _context.Users.Where(u => u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync()) :
+
+                        View(await _context.Users.Where(u => u.Email.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync());            
         }
 
         // GET: Users/Details/5
@@ -69,17 +82,19 @@ namespace MKsEMS.Controllers
 
         // GET: Users/Create
         /// <summary>
-        /// Only Administrators are allowed to create User account
+        /// Only Administrators are allowed to create User account.
+        /// Anyone else is rederected to the intdex View
         /// </summary>
         /// <returns></returns>
         public IActionResult Create()
         {
+            TempData["CreateMessageFail"] = "";
             TempData["AdminMessage"] = "";
 
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             return View();
@@ -99,11 +114,22 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             if (ModelState.IsValid)
             {
+                //validating User's DOB
+                DateTime userDOB = new (user.DOB.Year, user.DOB.Month, user.DOB.Day);                 
+                TimeSpan age = DateTime.Today - userDOB;
+                int yearsOld = (int)(age.TotalDays / 365.25);
+
+                if (yearsOld < 16)
+                {
+                    TempData["CreateMessageFail"] = "The date of birth of the User cannot be " + user.DOB + " - the difference between this year and the year the user was born cannot be younger than 16.";
+                    return View(user);
+                }
+
                 //creating email address for the user
                 SetEmail(user);
                 string tempPass = GenerateRandomPass.GeTempPassword();
@@ -176,7 +202,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             if (id == null || _context.Users == null)
@@ -211,7 +237,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             if (id != user.Id)
@@ -256,7 +282,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             if (id == null || _context.Users == null)
@@ -277,6 +303,7 @@ namespace MKsEMS.Controllers
         // POST: Users/Delete/5
         /// <summary>
         /// Deleting the user account from the database
+        /// This invokes other methods to remove the user's Credentials and Contact from the database
         /// </summary>
         /// <param name="id">Id of the user to be deleted</param>
         /// <returns>Redirected to list of users</returns>
@@ -289,7 +316,7 @@ namespace MKsEMS.Controllers
             if (!AdminUserIsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
+                return RedirectToAction("Index", "Users"); //Only if user is not already logged in;
             }
 
             if (_context.Users == null)
@@ -306,9 +333,7 @@ namespace MKsEMS.Controllers
 
                 if(userCredentials !=null)
                     _context.Credentials.Remove(userCredentials);
-            }
-            
-
+            } 
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

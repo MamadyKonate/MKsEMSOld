@@ -1,30 +1,13 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Identity.Client;
 using MKsEMS.Data;
 using MKsEMS.Models;
 using Newtonsoft.Json;
 
 namespace MKsEMS.Controllers
-{
-    ////TO BE REMOVED - BEING REPLACED BEY CurrentUser2 CLASS
-    //public static class CurrentUser 
-    //{
-    //    public static User GetLoggedInUser { get; set; } = new();
-
-    //    /// <summary>
-    //    /// Returns true if a _user is logged in.
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public static bool IsLoggedIn()
-    //    {
-    //        if (GetLoggedInUser.IsUserLoggedIn)
-    //            return true;
-
-    //        return false;
-    //    }
-    //}
-
+{  
     public  class CurrentUser2
     {
         private readonly IHttpContextAccessor _sessionContext;
@@ -49,7 +32,7 @@ namespace MKsEMS.Controllers
 
             //Session only takes string or int - objects have to be serialized for storing them
             string userJSon = JsonConvert.SerializeObject(user);
-            _sessionContext.HttpContext.Session.SetString("_loggedInUser", userJSon);            
+            _sessionContext.HttpContext.Session.SetString("_currentUser", userJSon);            
              
             if (GetLoggedInUser().IsUserLoggedIn)
                 loggedIn = 1;
@@ -66,9 +49,9 @@ namespace MKsEMS.Controllers
         /// <returns>Reconstructed logged in User</returns>
         public User GetLoggedInUser ()
         {
-            if (_sessionContext.HttpContext.Session.GetString("_loggedInUser")!= null){
+            if (_sessionContext.HttpContext.Session.GetString("_currentUser")!= null){
 
-                string userJSon = _sessionContext.HttpContext.Session.GetString("_loggedInUser");
+                string userJSon = _sessionContext.HttpContext.Session.GetString("_currentUser");
                 _loggedInUser = JsonConvert.DeserializeObject<User>(userJSon);
 
                 return _loggedInUser;
@@ -118,13 +101,9 @@ namespace MKsEMS.Controllers
         public static SelectList? GetJobTitlesSelectList() { return new SelectList(Alldrop.GetJobTitles()); }
         public static SelectList? GetUsersManagerEmailsSelectList() { return new SelectList(Alldrop.GetUsersManagerEmails()); }
         public static SelectList? GeGetLeaveAllowancesSelectList() { return new SelectList(Alldrop.GetLeaveAllowances()); }
-    
-        // TO BE MOVED INTO A NON-STATIC CLASS
-        /// <summary>
-        /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
-        /// </summary>
-       // public static List<User>? GetFilteredUsers { get; set; } = new();        
-        
+        public static SelectList? GetLeaveStatusSelectList() { return new SelectList(Alldrop.LeaveStatus()); }
+        public static List<string> GetLeaveStatus() { return Alldrop.LeaveStatus(); }
+       
     }
 
     public class AllDropDownListData
@@ -245,7 +224,7 @@ namespace MKsEMS.Controllers
                 }
             return _allJobTitles;
         }
-
+       
         /// <summary>
         /// Retrieving from the Sqlite DB, all Leave bookings made from the database.
         /// </summary>
@@ -263,7 +242,20 @@ namespace MKsEMS.Controllers
         /// <summary>
         /// This method returns a list of specific (filtered) users stored in the Sqlite databe at any given moment.
         /// </summary>
-        public  List<User> GetFilteredUsers { get; set; } = new();
+        public  List<User> GetFilteredUsers { get; set; } = new();   
+        
+
+        public List<string> LeaveStatus()
+        {
+            List<string> stat = new();          
+            
+            stat.Add("Pending");
+            stat.Add("Approved");
+            stat.Add("Denied");
+
+            return stat;
+        }
+
     }
 
 }

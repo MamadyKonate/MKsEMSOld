@@ -7,22 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using MKsEMS.ViewModels;
 
 namespace MKsEMS.Controllers
 {
     public class Companies1Controller : Controller
     {
         private readonly EMSDbContext _context;
+        private CurrentUser2 _currentUser;
 
-        public Companies1Controller(EMSDbContext context)
+
+        public Companies1Controller(EMSDbContext context, CurrentUser2 currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         // GET: Companies1
         public async Task<IActionResult> Index()
         {
-              return _context.Companies != null ? 
+            if (_currentUser.GetLoggedInUser() != null)
+            { //ensure logged in user is not null first before checking its properties
+
+                if (!_currentUser.GetLoggedInUser().IsCEO || !_currentUser.GetLoggedInUser().IsAdmin)
+                    return RedirectToAction("Index","UserLogins");
+
+            }
+
+            return _context.Companies != null ? 
                           View(await _context.Companies.ToListAsync()) :
                           Problem("Entity set 'EMSDbContext.Companies'  is null.");
         }
