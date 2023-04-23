@@ -4,6 +4,7 @@
 
 @{
     ViewData["JobTitle"] = "Details";
+    string dividerr = "  |  ";
 }
 
 <h1>Details</h1>
@@ -107,9 +108,9 @@
     @{
         if (_loggedInUser.GetLoggedInUser().IsAdmin)
         {
-            <a asp-action="Edit" asp-route-id="@Model?.Id"> Edit</a> 
+            <a asp-action="Edit" asp-route-id="@Model?.Id"> Edit @dividerr</a> 
         }        
     }
     
-    <a asp-action="Index"> | Back to List</a>
+    <a asp-action="Index"> All Users</a>
 </div>

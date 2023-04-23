@@ -2,10 +2,10 @@
 @using MKsEMS.Controllers
 @inject CurrentUser2 _loggedInUser;
 
+
 @{
     ViewData["JobTitle"] = "Index";
-
-
+    string divider = "  |  ";
 }
 
 <h1>User accounts page</h1>
@@ -27,16 +27,56 @@
                 </h5> 
             </div>
         }
-        //if (TempData["AdminMessage"] != null)
-        //{
-        //    <div class="alert alert-danger">
-        //        <h5>                   
-        //            @TempData["AdminMessage"]
-        //        </h5>
-        //    </div>
-        //}
     }
 </div>
+
+<div class="mb-2 d-flex flex-row"><h1>@ViewData["Title"]</h1></div>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-flex flex-row-reverse mt-5 border border-primary pt-3 mb-5 bg-light ">
+    
+
+    <div>
+        <form method="post">
+            <div class="row g-4 w-50">
+                <div class="col">
+                    <input type="text" name="nameToFind" />
+                </div>
+                <div class="col">
+                    <input asp-controller="Users" asp-action="FindByName" type="submit" value="Search in fullname" class="btn btn-primary mb-3" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <form method="post">
+            <div class="row g-4 w-50">
+                <div class="col">
+                    <input type="text" name="TitleToFind" />
+                </div>
+                <div class="col">
+                    <input asp-controller="Users" asp-action="FindByJobTitle" type="submit" value="Search by Job Title" class="btn btn-primary mb-3" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <form method="post">
+            <div class="row g-4 w-50">
+                <div class="col">
+                    <input type="text" name="nameToFind" />
+                </div>
+                <div class="col">
+                    <input asp-controller="Users" asp-action="FindByName" type="submit" value="Search in fullname" class="btn btn-primary mb-3" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <p>
     @{
         if (_loggedInUser.GetLoggedInUser().IsAdmin)
@@ -46,8 +86,7 @@
         else
         {
             <a asp-controller="Leaves" asp-action="Create"> Make a Leave Request </a>
-      }
-
+        }
     }
 </p>
 <table class="table">
@@ -133,6 +172,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.SickLeaveTaken)
             </td>
+            <td></td>
 
             @{
                 if (_loggedInUser.GetLoggedInUser().IsAdmin)
@@ -147,31 +187,23 @@
                         @Html.DisplayFor(modelItem => item.IsCEO)
                     </td>
             
+                }
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        @{
-                            if (!_loggedInUser.GetLoggedInUser().IsAdmin)
+
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+
+                        @{   
+                            if(_loggedInUser.GetLoggedInUser().IsAdmin)
                             {
-                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                               @divider <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @divider          
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>  
                             }
-                        }
+                         }
                 
                     </td>
                 }
             }
-                @{
-                    <td>
                 
-                        @{
-                            if (!_loggedInUser.GetLoggedInUser().IsAdmin)
-                            {
-                                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                            }
-                        }
-                    </td>
-                }
             
         </tr>
 }

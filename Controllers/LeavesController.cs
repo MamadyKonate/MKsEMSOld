@@ -29,9 +29,6 @@ namespace MKsEMS.Controllers
 
         public bool EnoughDaysRemained(string userEmail, string leaveType)
         {      
-            
-            
-
             User user = new();
             user = _context.Users.Where(u => u.Email == userEmail).First();
             
@@ -43,8 +40,6 @@ namespace MKsEMS.Controllers
                         
             if (leaveType != "Annual Leave") //we are only interested in checking annual leave left for the user
                 return true;
-            
-            daysOff = duration.Days + 1;  //this is needed otherwise requested date range will be off by -1 day, 
 
             return remainingDays >= daysOff;
         }

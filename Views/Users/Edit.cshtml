@@ -1,4 +1,5 @@
 ﻿@model MKsEMS.Models.User
+@using MKsEMS.Controllers
 
 @{
     ViewData["JobTitle"] = "Edit";
@@ -30,22 +31,22 @@
             </div>
             <div class="form-group mb-3">
                 <label asp-for="JobTitle" class="control-label"></label>
-                <input asp-for="JobTitle" class="form-control" />
+                @Html.DropDownList("JobTitle",ViewModelData.GetJobTitlesSelectList(),Model.JobTitle,new {@class = "form-control"})
                 <span asp-validation-for="JobTitle" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="ManagerEmail" class="control-label"></label>
-                <input asp-for="ManagerEmail" class="form-control" />
+                @Html.DropDownList("ManagerEmail",ViewModelData.GetUsersManagerEmailsSelectList(),@Model.ManagerEmail,new {@class = "form-control"})
                 <span asp-validation-for="ManagerEmail" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="DOB" class="control-label"></label>
-                <input asp-for="DOB" class="form-control" />
+                <input asp-for="DOB" class="form-control" value="@Model.DOB.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="DOB" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="LeaveEntitement" class="control-label"></label>
-                <input asp-for="LeaveEntitement" class="form-control" />
+                @Html.DropDownList("LeaveEntitement",ViewModelData.GeGetLeaveAllowancesSelectList(),@Model.LeaveEntitement.ToString(),new {@class = "form-control"})
                 <span asp-validation-for="LeaveEntitement" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
@@ -58,7 +59,7 @@
                 <input asp-for="SickLeaveTaken" class="form-control" />
                 <span asp-validation-for="SickLeaveTaken" class="text-danger"></span>
             </div>           
-            <div class="form-group form-check" mb-3>
+            <div class="form-group form-check" mb-3 hidden>
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsUserLoggedIn" /> @Html.DisplayNameFor(model => model.IsUserLoggedIn)
                 </label>
@@ -79,14 +80,14 @@
                 </label>
             </div>
             <div class="form-group mb-3 mt-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Update changes" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div class="mt-3">
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">All Users</a>
 </div>
 
 @section Scripts {

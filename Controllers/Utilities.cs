@@ -118,6 +118,7 @@ namespace MKsEMS.Controllers
         public AllDropDownListData(EMSDbContext context)
         {
             _context = context;
+            GetFilteredUsers = context.Users.ToList();
         }
         /// <summary>
         /// Retrieving all data from the database.
