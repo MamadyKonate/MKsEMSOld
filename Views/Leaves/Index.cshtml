@@ -6,6 +6,36 @@
 
 <h1>Index</h1>
 
+
+<div>
+    @{
+        if (TempData["LeaveMsg"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["CreateMessageFail"]
+            </div>
+        }
+        if (TempData["CreateMessageSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                <h5>
+
+                    @TempData["CreateMessageSuccess"]
+                </h5>
+            </div>
+        }
+        //if (TempData["AdminMessage"] != null)
+        //{
+        //    <div class="alert alert-danger">
+        //        <h5>
+        //            @TempData["AdminMessage"]
+        //        </h5>
+        //    </div>
+        //}
+    }
+</div>
+
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>

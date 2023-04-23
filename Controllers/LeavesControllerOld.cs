@@ -194,8 +194,6 @@ namespace MKsEMS.Controllers
         
         private IActionResult ProcessLeaves(Leave leave)
         {
-            if (_currentUser.GetLoggedInUser() == null &&
-                _currentUser.IsLoggedIn() && _currentUser.GetLoggedInUser().IsManager)
             {
                 switch (leave.Status)
                 {
