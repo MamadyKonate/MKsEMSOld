@@ -24,7 +24,7 @@ namespace MKsEMS.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Credentials> Credentials { get; set; } 
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Administraor> Administraors { get; set; }
+        public DbSet<Administrator> Administraors { get; set; }
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<LeaveAllowance> LeaveAllowances { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; } 

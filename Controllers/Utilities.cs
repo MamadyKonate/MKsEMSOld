@@ -67,7 +67,7 @@ namespace MKsEMS.Controllers
         public bool IsLoggedIn()
         {
             if (GetLoggedInUser() == null) 
-                return false;            
+                return false;          
           
             
             return GetLoggedInUser().IsUserLoggedIn;

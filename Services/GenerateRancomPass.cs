@@ -17,7 +17,7 @@
             //first characters in Upoercase and 3 in lower 
             for (int i = 0; i < 4; i++)
             {
-                index = rand.Next(0, 25);
+                index = rand.Next(0, 25); //the 26 letters of the alphabet
                 if (i == 0)
                 {
                     randomPassword += alphabet[index].ToUpper();

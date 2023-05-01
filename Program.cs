@@ -18,14 +18,13 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(240);
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     //options.Cookie.HttpOnly = true;
     //options.Cookie.IsEssential = true;
 });
 
-//builder.Services.AddSingleton<AllDropDownListData>();
+//for making the currently logged in user available to all controllers and views
 builder.Services.AddSingleton<CurrentUser2>();
-
 
 var app = builder.Build();
 

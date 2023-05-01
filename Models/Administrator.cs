@@ -1,6 +1,6 @@
 ﻿namespace MKsEMS.Models
 {
-    public class Administraor : User
+    public class Administrator : User
     {
         //these should probably go in the Controllers namespace
         public void CreateUser(User user)

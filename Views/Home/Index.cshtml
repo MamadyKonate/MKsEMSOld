@@ -1,9 +1,32 @@
 ﻿@{
     ViewData["JobTitle"] = "Home Page";
 }
-<h2>
-<div class="text-center">
-    <h1 class="display-4">Please login to proceed</h1>
-        
-    
-</div>
+
+    <div>
+
+        <form asp-asp-controller="AdminUser" asp-action="Create" method="post">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="w-50">
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h1 class="card-title">Welcome to </h1>
+                                        <hr />
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div>
+                                            <img src="~/images/home.png" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
