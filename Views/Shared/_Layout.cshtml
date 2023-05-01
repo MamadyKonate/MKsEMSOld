@@ -7,7 +7,12 @@
 @using MKsEMS.Controllers
 @{
     var email = "";
-    if (user.GetLoggedInUser() != null) { email = user.GetLoggedInUser().Email; }
+    var name = "";
+    if (user.GetLoggedInUser() != null)
+    {
+        name = string.Concat(user.GetLoggedInUser().FirstName, " ", user.GetLoggedInUser().Surname);
+        email = user.GetLoggedInUser().Email;
+    }
 
     ViewData["Title"] = "Index";
     var welcomeMsg = "Welcome ";
@@ -36,7 +41,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 position-fixed vw-100">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MKsEMS</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -78,9 +83,10 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="UserLogins" asp-action="Index">Logins</a>
-                        </li>
+                        </li>                      
                     </ul>
                 </div>
+                <div class="align-content-lg-end">@name</div>
             </div>
         </nav>
     </header>
@@ -102,11 +108,7 @@
                         @welcomeMsg
                     </h1>
                 }                               
-           }
-
-           <div class="d-flex flex-row-reverse">
-                 <h4>@email</h4>
-
+           }           
             <br />
              
             <p>
