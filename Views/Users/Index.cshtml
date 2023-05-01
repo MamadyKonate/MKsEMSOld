@@ -35,13 +35,16 @@
 @{
     ViewData["Title"] = "Index";
 }
+@*
+FOR DISPLAYING STUFF TO THE RIGHT, USE flex-row-reverse
+<div class="d-flex flex-row-reverse mt-5 border border-primary pt-3 mb-5 bg-light "> *@
 
-<div class="d-flex flex-row-reverse mt-5 border border-primary pt-3 mb-5 bg-light ">
+<div class="d-flex flex-sm-row mt-5 border  pt-3 mb-5 bg-light w-75">
     
 
-    <div>
+    <div class="align-content-between">
         <form method="post">
-            <div class="row g-4 w-50">
+            <div class="row g-4 w-50 m-sm-auto">
                 <div class="col">
                     <input type="text" name="nameToFind" />
                 </div>
@@ -51,9 +54,12 @@
             </div>
         </form>
     </div>
+
+
+
     <div>
         <form method="post">
-            <div class="row g-4 w-50">
+            <div class="row g-4 w-50 m-sm-auto">
                 <div class="col">
                     <input type="text" name="TitleToFind" />
                 </div>
@@ -63,18 +69,7 @@
             </div>
         </form>
     </div>
-    <div>
-        <form method="post">
-            <div class="row g-4 w-50">
-                <div class="col">
-                    <input type="text" name="nameToFind" />
-                </div>
-                <div class="col">
-                    <input asp-controller="Users" asp-action="FindByName" type="submit" value="Search in fullname" class="btn btn-primary mb-3" />
-                </div>
-            </div>
-        </form>
-    </div>
+    
 </div>
 
 <p>
@@ -82,11 +77,7 @@
         if (_loggedInUser.GetLoggedInUser().IsAdmin)
         {
             <a asp-action="Create">Create a new User account</a>
-        }
-        else
-        {
-            <a asp-controller="Leaves" asp-action="Create"> Make a Leave Request </a>
-        }
+        }        
     }
 </p>
 <table class="table">

@@ -50,16 +50,8 @@ namespace MKsEMS.Controllers
             
             if(_context.Users.ToList() == null)
                 return  Problem("Entity set 'EMSDbContext.Users'  is null.");
-
-
-            _filteredObjects.GetFilteredUsers =  _currentUser.GetLoggedInUser().IsAdmin ?
-                        await _context.Users.ToListAsync() :
-                        
-                        _currentUser.GetLoggedInUser().IsManager ?
-                       await _context.Users.Where(u => u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync() :
-
-                       await _context.Users.Where(u => u.Email.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync();
-            return  View(_filteredObjects.GetFilteredUsers);
+            
+            return  View(GetRelevantUsers());
         }
 
         // GET: Users/Details/5
@@ -74,8 +66,7 @@ namespace MKsEMS.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user =  GetRelevantUsers().FirstOrDefault(m => m.Id == id);
             if (user == null)
             {
                 return NotFound();
@@ -382,11 +373,10 @@ namespace MKsEMS.Controllers
 
 
             if (nameToFind != null)
-                _filteredObjects.GetFilteredUsers = (from us in _context.Users
-                                                  select us).Where(us => string.Concat(us.Surname.ToLower(), us.FirstName.ToLower())
-                                                                                      .Contains(nameToFind.ToLower())).ToList();
-
-            return View("Index", _filteredObjects.GetFilteredUsers);
+                return View("Index", (from us in GetRelevantUsers() select us)
+                                      .Where(us => string.Concat(us.Surname.ToLower(), us.FirstName.ToLower())
+                                                                                      .Contains(nameToFind.ToLower())).ToList());
+            return View("Index", GetRelevantUsers());
         }
 
         public async Task<IActionResult> FindByJobTitle(string TitleToFind)
@@ -396,10 +386,10 @@ namespace MKsEMS.Controllers
 
 
             if (TitleToFind != null)
-                _filteredObjects.GetFilteredUsers = (from us in _filteredObjects.GetFilteredUsers
-                                                     select us).Where(us => us.JobTitle.ToLower().Contains(TitleToFind.ToLower())).ToList();
+                return  View("Index", (from us in GetRelevantUsers() select us)
+                                        .Where(us => us.JobTitle.ToLower().Contains(TitleToFind.ToLower())).ToList());
 
-            return View("Index", _filteredObjects.GetFilteredUsers);
+            return View("Index", GetRelevantUsers());
         }
 
 
@@ -417,9 +407,21 @@ namespace MKsEMS.Controllers
                 return Problem("There is no data in the User table.");
             }
 
-            return View("Index",_filteredObjects.GetFilteredUsers);
+            return View("Index",GetRelevantUsers());
         }
 
+        private List<User> GetRelevantUsers()
+        {
+            _filteredObjects.GetFilteredUsers = _currentUser.GetLoggedInUser().IsAdmin ?
+                         _context.Users.ToList() :
+
+                        _currentUser.GetLoggedInUser().IsManager ?
+                        _context.Users.Where(u => u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)
+                            || u.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToList() :
+                        
+                         _context.Users.Where(u => u.Email.Equals(_currentUser.GetLoggedInUser().Email)).ToList();
+            return _filteredObjects.GetFilteredUsers;
+        }
 
         private bool UserExists(int id)
         {

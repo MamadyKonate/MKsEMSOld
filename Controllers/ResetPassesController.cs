@@ -26,7 +26,7 @@ namespace MKsEMS.Controllers
         
         public IActionResult ResetPassword()
         {
-            TempData["NoMatchingPass"] = "";
+            TempData["PasswordMsg"] = "";
             return View();
         }
 
@@ -43,7 +43,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword([Bind("Id,Email,CurrentPassword,NewPassword,ReEnterNewPassword")] ResetPass resetPass)
         {
-            TempData["NoMatchingPass"] = "";
+            TempData["PasswordMsg"] = "";
 
             if (ModelState.IsValid)
             {
@@ -54,7 +54,7 @@ namespace MKsEMS.Controllers
 
                if( resetPass.NewPassword != resetPass.ReEnterNewPassword)
                 {
-                    TempData["NoMatchingPass"] = "New passwords do not match";
+                    TempData["PasswordMsg"] = "New passwords do not match";
 
                     return View(resetPass);
                 }
@@ -65,14 +65,14 @@ namespace MKsEMS.Controllers
                     if( credentials == null ||
                         EncDecPassword.DecodeFrom64(credentials.EncPass) != resetPass.CurrentPassword)
                     {
-                        TempData["NoMatchingPass"] = "Username or password you entered is incorrect";
+                        TempData["PasswordMsg"] = "Username or password you entered is incorrect";
                         return View(resetPass);
                     }
                     
                     credentials.EncPass = EncDecPassword.Enc64bitsPass(resetPass.NewPassword);
                     await _context.SaveChangesAsync();
                     
-                    TempData["NoMatchingPass"] = "Password reset successfully";
+                    TempData["PasswordMsg"] = "Password reset successfully";
 
                     return View();                   
                 } 
