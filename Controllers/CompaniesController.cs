@@ -25,6 +25,11 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Index()
         {
             TempData["AdminMessage"] = "";
+            if (!_currentUser.IsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login to proceed";
+                return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;            
+            }
 
             if (!GrantedAccess())
             {
