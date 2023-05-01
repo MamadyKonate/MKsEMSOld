@@ -25,7 +25,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Index()
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             return _context.LeaveAllowances != null ? 
                           View(await _context.LeaveAllowances.ToListAsync()) :
@@ -36,7 +36,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
 
             if (id == null || _context.LeaveAllowances == null)
@@ -58,7 +58,7 @@ namespace MKsEMS.Controllers
         public IActionResult Create()
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             return View();
         }
@@ -71,7 +71,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Create([Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             if (id == null || _context.LeaveAllowances == null)
             {
@@ -109,7 +109,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Allowance")] LeaveAllowance leaveAllowance)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             if (id != leaveAllowance.Id)
             {
@@ -143,7 +143,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             if (id == null || _context.LeaveAllowances == null)
             {
@@ -166,7 +166,7 @@ namespace MKsEMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!AdminUserIsLoggedIn())
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
 
             if (_context.LeaveAllowances == null)
             {
