@@ -13,43 +13,43 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                First Name
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Surname)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.JobTitle)
+                Job Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ManagerEmail)
+                Manager's Email
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DOB)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LeaveEntitement)
+                Leave Entitement
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LeaveTaken)
+                Leave Taken
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SickLeaveTaken)
+                Sick Leave Taken
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsUserLoggedIn)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsAdmin)
+                Admin User
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsManager)
+                Is a Manager
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsCEO)
+                Is the CEO
             </th>
             <th></th>
         </tr>
@@ -97,9 +97,9 @@
                 @Html.DisplayFor(modelItem => item.IsCEO)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="alert-danger">Delete</a>
             </td>
         </tr>
 }

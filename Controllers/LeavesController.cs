@@ -56,7 +56,9 @@ namespace MKsEMS.Controllers
                         View(await _context.Leaves.ToListAsync()) :
 
                         _currentUser.GetLoggedInUser().IsManager ?
-                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync()) :
+                        View(await _context.Leaves.Where(l => l.ManagerEmail.Equals(_currentUser.GetLoggedInUser().Email)
+                                                      || l.UserEmail.Equals(_currentUser.GetLoggedInUser().Email)
+                                                        ).ToListAsync()) :
 
                         View(await _context.Leaves.Where(l => l.UserEmail.Equals(_currentUser.GetLoggedInUser().Email)).ToListAsync());
             }
@@ -103,10 +105,10 @@ namespace MKsEMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserEmail,ManagerEmail,DateFrom,DateTo,LeaveType,Status,DenialReason")] Leave leave)
+        public async Task<IActionResult> Create([Bind("Id,UserEmail,Status, ManagerEmail,DateFrom,DateTo,LeaveType")] Leave leave)
         {
             TempData["LeaveRqMsg"] = "";
-
+          
             if (!_currentUser.IsLoggedIn())
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;
 
@@ -123,10 +125,9 @@ namespace MKsEMS.Controllers
                         && _endDate.CompareTo(DateTime.Now.Date) >= 0)
                         && _startDate.Date <= _endDate.Date) 
                     {                        
-                        leave.Status = "Pending";                        
+                                             
 
                         _context.Add(leave);
-                        _context.Users.Update(_currentUser.GetLoggedInUser());
 
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));  
@@ -265,7 +266,15 @@ namespace MKsEMS.Controllers
             TempData["LeaveRqMsg"] = "";
 
             User user = new();
-            
+            user = _context.Users.Where(u => u.Email == leave.UserEmail).First();
+
+            if (user.Id == _currentUser.GetLoggedInUser().Id)
+            {
+                TempData["LeaveRqMsg"] = "You cannot process your own Lear Request.  Ask your to process this for you";
+                return View(leave);
+            }
+
+
             _startDate = leave.DateFrom.ToDateTime(new TimeOnly());
             _endDate = leave.DateTo.ToDateTime(new TimeOnly());
 
@@ -278,7 +287,7 @@ namespace MKsEMS.Controllers
                 {
                     
                     leave.numberOfDays = daysOff;
-                    user = _context.Users.Where(u => u.Email == leave.UserEmail).First();
+                    
                     
 
                     //Approved will be replaced with Ennum value
@@ -302,7 +311,6 @@ namespace MKsEMS.Controllers
                     try
                     {
                         _context.Update(leave);
-                        _context.Update(user);
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)

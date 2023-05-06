@@ -4,6 +4,8 @@ using MKsEMS.Data;
 using MKsEMS.Models;
 using MKsEMS.Services;
 using MKsEMS.ViewModels;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MKsEMS.Controllers
 {
@@ -61,7 +63,7 @@ namespace MKsEMS.Controllers
 
                 //Getting account with matching email first
                 var userCredentials = (_context.Credentials.Where(
-                    uc => uc.UserEmail == user.Email)).FirstOrDefault();
+                    uc => uc.UserEmail.ToLower() == user.Email.ToLower())).FirstOrDefault();
 
                 if (userCredentials != null)  //we have our user
                 {

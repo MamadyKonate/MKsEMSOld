@@ -60,14 +60,18 @@ namespace MKsEMS.Controllers
                 }
                 else
                 {
-                    var credentials =  await _context.Credentials.Where(c => c.UserEmail == resetPass.Email).FirstOrDefaultAsync();
+                    var credentials =  await _context.Credentials.Where(c => c.UserEmail.ToLower() == resetPass.Email.ToLower()).FirstOrDefaultAsync();
                     
-                    if( credentials == null ||
-                        EncDecPassword.DecodeFrom64(credentials.EncPass) != resetPass.CurrentPassword)
+                    if( credentials == null )
                     {
                         TempData["PasswordMsg"] = "Username or password you entered is incorrect";
                         return View(resetPass);
                     }
+                    if(EncDecPassword.DecodeFrom64(credentials.EncPass) != resetPass.CurrentPassword)
+                    {
+                        TempData["PasswordMsg"] = "Username or password you entered is incorrect"; 
+                        return View(resetPass);
+                    }                        
                     
                     credentials.EncPass = EncDecPassword.Enc64bitsPass(resetPass.NewPassword);
                     await _context.SaveChangesAsync();

@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CurrentPassword)
+                Current Password
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NewPassword)
+                New Password
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReEnterNewPassword)
+                Re-enter New Password
             </th>
             <th></th>
         </tr>
@@ -43,9 +43,9 @@
                 @Html.DisplayFor(modelItem => item.ReEnterNewPassword)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="alert-danger">Delete</a>
             </td>
         </tr>
 }

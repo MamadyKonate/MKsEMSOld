@@ -6,6 +6,7 @@ using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MKsEMS.Data;
 using MKsEMS.Models;
@@ -27,8 +28,7 @@ namespace MKsEMS.Controllers
             _context = context;
             _currentUser = currentUser;
             _filteredObjects = new AllDropDownListData(context);     
-        }
-        
+        }        
 
         // GET: Users
         /// <summary>
@@ -135,7 +135,7 @@ namespace MKsEMS.Controllers
                 user.FirstTimeLogin = true; //So the user will be forced to change password on first login
 
                 await _context.AddAsync(_credentials);
-                _context.SaveChangesAsync();
+               // _context.SaveChangesAsync();
                 
                 //now creating a record in Users table for the user
                 _context.Add(user);                
@@ -227,6 +227,7 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Email,JobTitle,ManagerEmail,DOB,LeaveEntitement,LeaveTaken,SickLeaveTaken,IsUserLoggedIn,IsAdmin,IsManager,IsCEO")] User user)
         {
+
             TempData["AdminMessage"] = "";
 
             if (!AdminUserIsLoggedIn())
@@ -239,13 +240,22 @@ namespace MKsEMS.Controllers
             {
                 return NotFound();
             }
+            if (user.Id == _currentUser.GetLoggedInUser().Id)
+            {
+                TempData["AdminMessage"] = "You cannot edit your own account.  Request a different Adminitrator to do this for you";
+                return View(user);
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    using (var newContext = new EMSDbContext())
+                    {
+                        newContext.Users.Update(user);
+                        await newContext.SaveChangesAsync();
+                        TempData["CreateMessageSuccess"] = $"User ({user.Email}) was update successfully.";
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -379,6 +389,7 @@ namespace MKsEMS.Controllers
             return View("Index", GetRelevantUsers());
         }
 
+        [HttpPost]
         public async Task<IActionResult> FindByJobTitle(string TitleToFind)
         {
             if (_currentUser.GetLoggedInUser() == null)
@@ -393,22 +404,22 @@ namespace MKsEMS.Controllers
         }
 
 
-        /// <summary>
-        /// Filterng User records based on their Gender or Handicap range
-        /// </summary>
-        /// <param name="criteria">Either Gender or Handicap range</param>
-        /// <returns></returns>
-        [HttpPost, ActionName("Filters")]
-        public async Task<IActionResult> Filters(string criteria)
-        {           
+        ///// <summary>
+        ///// Filterng User records based on their Gender or Handicap range
+        ///// </summary>
+        ///// <param name="criteria">Either Gender or Handicap range</param>
+        ///// <returns></returns>
+        //[HttpPost, ActionName("Filters")]
+        //public async Task<IActionResult> Filters(string criteria)
+        //{           
 
-            if (_filteredObjects.GetFilteredUsers == null)
-            {
-                return Problem("There is no data in the User table.");
-            }
+        //    if (_filteredObjects.GetFilteredUsers == null)
+        //    {
+        //        return Problem("There is no data in the User table.");
+        //    }
 
-            return View("Index",GetRelevantUsers());
-        }
+        //    return View("Index",GetRelevantUsers());
+        //}
 
         private List<User> GetRelevantUsers()
         {

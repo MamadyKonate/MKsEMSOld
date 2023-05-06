@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using MKsEMS.Data;
 using MKsEMS.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MKsEMS.Controllers
 {
@@ -27,7 +29,8 @@ namespace MKsEMS.Controllers
             TempData["AdminMessage"] = "";
             if (!_currentUser.IsLoggedIn())
             {
-                TempData["AdminMessage"] = "Please login to proceed";
+                TempData["Message"] = "";
+                TempData["Message"] = "Please login to proceed";
                 return RedirectToAction("Index", "UserLogins"); //Only if user is not already logged in;            
             }
 
@@ -161,11 +164,11 @@ namespace MKsEMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AddressLine1,AddressLine2,City,County,Eircode,Phone,Email,LogoURI,IsToBeDeleted")] Company company)
         {
-            TempData["AdminMessage"] = "";
+            TempData["Message"] = "";
 
             if (!_currentUser.GetLoggedInUser().IsAdmin)
             {
-                TempData["AdminMessage"] = "Please login as an Administrator";
+                TempData["Message"] = "Please login as an Administrator";
 
                 return RedirectToAction("Index", "UserLogins");
             }
@@ -288,12 +291,11 @@ namespace MKsEMS.Controllers
         {
             if (_currentUser.GetLoggedInUser() != null){ //ensure logged in user is not null first before checking its properties
                 
-                if (!_currentUser.GetLoggedInUser().IsCEO || !_currentUser.GetLoggedInUser().IsAdmin)
-                return false;
-
+                if (_currentUser.GetLoggedInUser().IsCEO || _currentUser.GetLoggedInUser().IsAdmin)
+                return true;
             }
                            
-            return true;
+            return false;
         }
     }
 }

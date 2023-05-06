@@ -42,13 +42,13 @@
                     if (!_currentUser.GetLoggedInUser().IsAdmin)
                     {
                         <label asp-for="ManagerEmail" class="control-label">Your email </label>
-                        <input type="text" name="UserEmail" value="@_currentUser.GetLoggedInUser().ManagerEmail" readonly>
-
+                        <input type="text" name="ManagerEmail" value="@_currentUser.GetLoggedInUser().ManagerEmail" readonly>
+                        
                         <br>
                     }
                     else
                     {
-                        <label asp-for="ManagerEmail" class="control-label"></label>
+                        <label asp-for="ManagerEmail" class="control-label">Manager's Email</label>
                         @Html.DropDownList("ManagerEmail",ViewModelData.GetUsersManagerEmailsSelectList(),"Select",new {@class = "form-control"})
                         //<input asp-for="UserEmail" class="form-control" />
                     }
@@ -57,33 +57,28 @@
             </div>            
             
             <div class="form-group mb-3">
-                <label asp-for="DateFrom" class="control-label"></label>
+                <label asp-for="DateFrom" class="control-label">Date From</label>
                 <input asp-for="DateFrom" class="form-control" />
                 <span asp-validation-for="DateFrom" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
-                <label asp-for="DateTo" class="control-label"></label>
+                <label asp-for="DateTo" class="control-label">Date To</label>
                 <input asp-for="DateTo" class="form-control" />
                 <span asp-validation-for="DateTo" class="text-danger"></span>
             </div>
-            <div class="form-group form-check" hidden>
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Status" value="Pending" /> @Html.DisplayNameFor(model => model.Status)
-                </label>
-            </div>            
+            <div class="form-group" hidden>
+                <label asp-for="Status" class="control-label"></label>                
+                @Html.DropDownList("Status",ViewModelData.GetLeaveStatusSelectList(),new {@class = "form-control"})
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
             <div class="form-group mb-3">
-                <label asp-for="LeaveType" class="control-label"></label>
+                <label asp-for="LeaveType" class="control-label">Leave Type</label>
                 @Html.DropDownList("LeaveType",ViewModelData.GetLeaveTypesSelectList(),"Select",new {@class = "form-control"})
                 <span asp-validation-for="LeaveType" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check" hidden>
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Status" value="0" /> @Html.DisplayNameFor(model => model.Status)
-                </label>
-            </div>
+            </div>            
             
             <div class="form-group" hidden>
-                <label asp-for="DenialReason" class="control-label"></label>
+                <label asp-for="DenialReason" class="control-label">Reason if denied</label>
                 <input asp-for="DenialReason" class="form-control" value="none"/>
                 <span asp-validation-for="DenialReason" class="text-danger"></span>
             </div>

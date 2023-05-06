@@ -44,29 +44,29 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserEmail)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ManagerEmail)
+               Manager's Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateFrom)
+                Date From
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateTo)
+                Date To
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.numberOfDays)
+                No. of Days
             </th>
             
             <th>
-                @Html.DisplayNameFor(model => model.LeaveType)
+                Leave Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                Current Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DenialReason)
+                Reason if denied
             </th>
 
 
@@ -90,7 +90,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DateTo)
             </td>
-            <td>
+            <td align="center">
                 @Html.DisplayFor(modelItem => item.numberOfDays)
             </td>
 
@@ -106,19 +106,22 @@
             </td>
             <td>
                 
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a>
                     @{
-                        if (item.Status == "Pending")
+                        if (_currentUser.GetLoggedInUser().Email != item.UserEmail)
                         {
-                            <lable>|</lable>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <lable>|</lable>
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                            if (_currentUser.GetLoggedInUser().IsAdmin)
+                            if (item.Status == "Pending")
                             {
                                 <lable>|</lable>
-                                <a asp-action="ProcessLeave" asp-route-id="@item.Id">Process Leave</a>                                                                                   
-                            }                            
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a>
+                                <lable>|</lable>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="alert-danger">Delete</a>
+                                if (_currentUser.GetLoggedInUser().IsManager)
+                                {
+                                    <lable>|</lable>
+                                    <a asp-action="ProcessLeave" asp-route-id="@item.Id" class="alert-success">Process Leave</a>                                                                                   
+                                }                            
+                            }
                         }
                     }
             </td>

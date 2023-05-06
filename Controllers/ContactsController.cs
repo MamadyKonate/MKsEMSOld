@@ -60,42 +60,42 @@ namespace MKsEMS.Controllers
             return View(contact);
         }
 
-        ///GET: Contacts/Create
-        //public IActionResult Create()
-        //{
-        //    if(!AdminUserIsLoggedIn())
-        //    {
-        //        TempData["AdminMessage"] = "Please login as an Administrator";
-        //        return RedirectToAction("Index", "Users");
-        //    }
+        //GET: Contacts/Create
+        public IActionResult Create()
+        {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "Users");
+            }
 
-        //    return View();
-        //}
+            return View();
+        }
 
-        //// POST: Contacts/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,AddressLine1,AddressLine2,AddressLine3,City,County,Eircode,Phone,UserEmail")] Contact contact)
-        //{
-        //    if (!AdminUserIsLoggedIn())
-        //    {
-        //        TempData["AdminMessage"] = "Please login as an Administrator";
-        //        return RedirectToAction("Index", "Users");
-        //    }
+        // POST: Contacts/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,AddressLine1,AddressLine2,AddressLine3,City,County,Eircode,Phone,UserEmail")] Contact contact)
+        {
+            if (!AdminUserIsLoggedIn())
+            {
+                TempData["AdminMessage"] = "Please login as an Administrator";
+                return RedirectToAction("Index", "Users");
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(contact);
-        //        await _context.SaveChangesAsync();
-        //        var user = _context.Users.FirstOrDefault(u => u.Email == contact.UserEmail);
+            if (ModelState.IsValid)
+            {
+                _context.Add(contact);
+                await _context.SaveChangesAsync();
+                var user = _context.Users.FirstOrDefault(u => u.Email == contact.UserEmail);
 
-        //        return RedirectToAction("index" , "Users");
-        //    }
+                return RedirectToAction("index", "Users");
+            }
 
-        //    return View(contact);
-        //}
+            return View(contact);
+        }
 
         // GET: Contacts/Edit/5
         public async Task<IActionResult> Edit(int? id)

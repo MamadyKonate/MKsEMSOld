@@ -23,7 +23,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group mb-3">
-                <label asp-for="FirstName" class="control-label"></label>
+                <label asp-for="FirstName" class="control-label">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
@@ -38,12 +38,12 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
-                <label asp-for="JobTitle" class="control-label"></label>
+                <label asp-for="JobTitle" class="control-label">Job Title</label>
                 @Html.DropDownList("JobTitle",ViewModelData.GetJobTitlesSelectList(),"Select",new {@class = "form-control"})
                 <span asp-validation-for="JobTitle" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
-                <label asp-for="ManagerEmail" class="control-label"></label>
+                <label asp-for="ManagerEmail" class="control-label">Manager's Email</label>
                 @Html.DropDownList("ManagerEmail",ViewModelData.GetUsersManagerEmailsSelectList(),"Select",new {@class = "form-control"})
                 <span asp-validation-for="ManagerEmail" class="text-danger"></span>
             </div>
@@ -53,17 +53,17 @@
                 <span asp-validation-for="DOB" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
-                <label asp-for="LeaveEntitement" class="control-label"></label>
+                <label asp-for="LeaveEntitement" class="control-label">Leave Entitement</label>
                 @Html.DropDownList("LeaveEntitement",ViewModelData.GeGetLeaveAllowancesSelectList(),"Select",new {@class = "form-control"})
                 <span asp-validation-for="LeaveEntitement" class="text-danger"></span>
             </div>
             <div class="form-group" hidden>
-                <label asp-for="LeaveTaken" class="control-label"></label>
+                <label asp-for="LeaveTaken" class="control-label">Leave Taken</label>
                 <input asp-for="LeaveTaken" class="form-control" value="0" />
                 <span asp-validation-for="LeaveTaken" class="text-danger"></span>
             </div>
             <div class="form-group" hidden>
-                <label asp-for="SickLeaveTaken" class="control-label"></label>
+                <label asp-for="SickLeaveTaken" class="control-label">Sick Leave Taken</label>
                 <input asp-for="SickLeaveTaken" class="form-control" value="0"/>
                 <span asp-validation-for="SickLeaveTaken" class="text-danger"></span>
             </div>
@@ -74,17 +74,17 @@
             </div>
             <div class="form-group form-check mb-3">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAdmin" /> @Html.DisplayNameFor(model => model.IsAdmin)
+                    <input class="form-check-input" asp-for="IsAdmin" /> Admin User
                 </label>
             </div>
             <div class="form-group form-check mb-3">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsManager" /> @Html.DisplayNameFor(model => model.IsManager)
+                    <input class="form-check-input" asp-for="IsManager" /> Is a Manager
                 </label>
             </div>
             <div class="form-group form-check mb-3">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsCEO" /> @Html.DisplayNameFor(model => model.IsCEO)
+                    <input class="form-check-input" asp-for="IsCEO" /> Is the CEO
                 </label>
             </div>
             <div class="form-group">
