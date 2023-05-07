@@ -62,8 +62,8 @@ namespace MKsEMS.Controllers
                 TempData["email"] = "";
 
                 //Getting account with matching email first
-                var userCredentials = (_context.Credentials.Where(
-                    uc => uc.UserEmail.ToLower() == user.Email.ToLower())).FirstOrDefault();
+                var userCredentials = await (_context.Credentials.Where(
+                    uc => uc.UserEmail.ToLower() == user.Email.ToLower())).FirstOrDefaultAsync();
 
                 if (userCredentials != null)  //we have our user
                 {
@@ -74,7 +74,7 @@ namespace MKsEMS.Controllers
                     if (pass == user.Password)
                     {
                         //we then configure the logged-in user accordingly
-                        var theUser = (_context.Users.Where(us => us.Email == userCredentials.UserEmail)).FirstOrDefault();
+                        var theUser = await (_context.Users.Where(us => us.Email == userCredentials.UserEmail)).FirstOrDefaultAsync();
 
                         theUser.IsUserLoggedIn = true;
 
