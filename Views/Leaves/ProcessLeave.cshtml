@@ -8,9 +8,14 @@
 
 <h1>Process the Leave Request</h1>
 <br />
-<div>
-    @TempData["LeaveRqMsg"] 
- </div>
+@{
+    if (@TempData["LeaveRqMsg"] != "")
+    {
+        <label class="bg-warning">
+            @TempData["LeaveRqMsg"]
+        </label>
+    }
+}
 
 <hr />
 <div class="row">

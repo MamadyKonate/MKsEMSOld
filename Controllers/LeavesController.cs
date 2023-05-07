@@ -234,8 +234,13 @@ namespace MKsEMS.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
-            }
-            TempData["LeaveRqMsg"] = "Leave request failed to be edited.";
+                else
+                {
+                    TempData["LeaveRqMsg"] = $"Not enough days remained on annual leave for {leave.UserEmail}.";
+                }
+
+                TempData["LeaveRqMsg"] = "The Leave Request could not be processed.  Please try again.";
+            }            
 
             return View(leave);
         }

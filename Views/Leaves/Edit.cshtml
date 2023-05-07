@@ -10,6 +10,15 @@
 
 <h4>Edit your Leave request</h4>
 <hr />
+
+@{
+    if (@TempData["LeaveRqMsg"] != "")
+    {
+    <label class="bg-warning">
+        @TempData["LeaveRqMsg"]
+    </label>
+    }    
+}
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -40,13 +49,11 @@
                 @Html.DropDownList("LeaveType",ViewModelData.GetLeaveTypesSelectList(),"Select",new {@class = "form-control"})
                 <span asp-validation-for="LeaveType" class="text-danger"></span>
             </div>
-
             <div class="form-group">                
                 <label asp-for="Status" class="control-label">Status</label>
                 <input asp-for="Status" class="form-control" readonly />
                 <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            
+            </div>            
             <div class="form-group mb-3">
                 <label asp-for="DenialReason" class="control-label">Reason if denied</label>
                 <input asp-for="DenialReason" class="form-control" readonly />
