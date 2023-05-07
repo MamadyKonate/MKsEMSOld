@@ -21,15 +21,11 @@ jobs:
         dotnet-version: [ '6.0.x', '7.0.x']
     
     steps:
-      - uses: actions/checkout@v3
-      - name: Code_scanning
-        run: echo Imagine we are linting and scanning our code here
-      - name: Compile
-        run: echo Imagine we are compiling our code here
-      - name: Test
-        run: echo Imagine we are testing our code here 
-      - name: ChecksComplete
-        run: echo Checks complete code built sucessfully
+    - uses: actions/checkout@v3
+    - name: Setup .NET version ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version:  ${{ matrix.dotnet-version }}       
     
     # Build and test have completed successfully
 
