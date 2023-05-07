@@ -1,6 +1,6 @@
 # This workflow demonstrates how you can use various environments (development, staging, production) in github.
 
-name: CI + CD demo pipeline
+name: CI/CD pipeline
 
 # Define when the workflow should run. On a push to main, a PR to main or manually with worfkow_dispatch
 on: 
@@ -16,6 +16,10 @@ jobs:
   # Define a build job
   Build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0.x', '7.0.x']
+    
     steps:
       - uses: actions/checkout@v3
       - name: Code_scanning
