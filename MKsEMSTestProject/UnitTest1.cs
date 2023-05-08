@@ -1,4 +1,4 @@
-namespace MyTestProject;
+namespace MKsEMSTestProject;
 
 public class UnitTest1
 {
