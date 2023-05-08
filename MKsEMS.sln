@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MKsEMS", "MKsEMS.csproj", "{307E4CEB-BF35-41BD-A096-1D7549CCF93F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject2", "TestProject2\TestProject2.csproj", "{0C17D8DC-5701-4E92-BC6A-BA70B232D660}"
+	ProjectSection(ProjectDependencies) = postProject
+		{307E4CEB-BF35-41BD-A096-1D7549CCF93F} = {307E4CEB-BF35-41BD-A096-1D7549CCF93F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
