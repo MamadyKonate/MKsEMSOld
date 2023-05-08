@@ -22,8 +22,7 @@ namespace MKsEMS.Controllers
             _context = context;
             _currentUser = loggedInUser;
             _allDropData = new (context);
-        }
-        
+        }        
         
         // GET: UserLogins
 
