@@ -1,10 +1,12 @@
 ﻿@model IEnumerable<MKsEMS.Models.Contact>
+@using MKsEMS.Controllers
+@inject CurrentUser2 user
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Contacts Page</h1>
 
 <p>
     <a asp-action="Create">Create a new Contact</a>
@@ -68,7 +70,12 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a> | 
-                <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a>
+                @{
+                    if(user.GetLoggedInUser().IsAdmin){
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a>
+                    }                    
+                }
+                
             </td>
         </tr>
 }

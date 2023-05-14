@@ -25,10 +25,10 @@ namespace MKsEMS.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            if (!AdminUserIsLoggedIn())
+            if (!_loggedInUser.IsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
             }
 
             return _context.Jobs != null ? 
@@ -39,10 +39,10 @@ namespace MKsEMS.Controllers
         // GET: Jobs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!AdminUserIsLoggedIn())
+            if (!_loggedInUser.IsLoggedIn())
             {
                 TempData["AdminMessage"] = "Please login as an Administrator";
-                return RedirectToAction("Index", "Users");
+                return RedirectToAction("Index", "UserLogins");
             }
 
             if (id == null || _context.Jobs == null)

@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<MKsEMS.Models.Job>
+@using MKsEMS.Controllers;
 @using MKsEMS.Data
+@inject CurrentUser2 user
 
 @{
     ViewData["Title"] = "Index";
@@ -7,10 +9,17 @@
 
 }
 
-<h1>Welcome to @company</h1>
+<h1>Jobs Page</h1>
 
 <p>
-    <a asp-action="Create">Create a new Job profile</a>
+    @{
+        if (user.GetLoggedInUser().IsAdmin)
+        {
+            <a asp-action="Create">Create a new Job profile</a>
+        }
+        
+    }
+   
 </p>
 <table class="table">
     <thead>
@@ -53,10 +62,19 @@
                 @Html.DisplayFor(modelItem => item.IsActive)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">@activate</a>
-            </td>
+
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="alert-info">Details</a>
+
+                    @{
+                        if (user.GetLoggedInUser().IsAdmin)
+                        {
+                            <label>|</label>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="alert-warning">Edit</a> <label>|</label>
+                            <a asp-action="Delete" asp-route-id="@item.Id">@activate</a>
+                        }
+                    }
+                </td>
         </tr>
 }
     </tbody>
