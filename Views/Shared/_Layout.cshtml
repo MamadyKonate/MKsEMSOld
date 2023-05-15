@@ -76,9 +76,7 @@
                                   || user.GetLoggedInUser().IsCEO
                                  )
                                 {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Jobs" asp-action="Index">Jobs</a>
-                                    </li>
+                                    
                                     
                                     if (user.GetLoggedInUser().IsAdmin || user.GetLoggedInUser().IsCEO)
                                     {
@@ -97,6 +95,9 @@
 
                             }
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Jobs" asp-action="Index">Jobs</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ResetPasses" asp-action="ResetPassword">Password Reset</a>
                         </li>
