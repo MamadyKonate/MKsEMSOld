@@ -4,7 +4,7 @@
 
 @{
     ViewData["JobTitle"] = "Details";
-    string dividerr = "  |  ";
+    string dividerr = "  |  ";    
 }
 
 <h1>Details</h1>
@@ -100,13 +100,15 @@
                 </dd>
                 
             }
-        }
+        }        
+
 
     </dl>
 </div>
 <div>
     @{
-        if (_loggedInUser.GetLoggedInUser().IsAdmin)
+        if (_loggedInUser.GetLoggedInUser().IsAdmin &&
+        _loggedInUser.GetLoggedInUser().Email != Model.Email.ToString())
         {
             <a asp-action="Edit" asp-route-id="@Model?.Id"> Edit @dividerr</a> 
         }        
