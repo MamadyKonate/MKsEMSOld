@@ -9,6 +9,9 @@
 @{
     var email = "";
     var name = "";
+    var currentYear = DateTime.Now.Year;
+    var compName = "No company set up yet!";
+
     bool loggedin = false;
     if (user.GetLoggedInUser() != null)
     {
@@ -22,8 +25,12 @@
     var _context = new EMSDbContext();
     var comp = _context.Companies.ToList().Where(c => !c.IsToBeDeleted).FirstOrDefault();
 
-    if (comp != null)    
+    if (comp != null)
+    {
+        compName = comp.Name;
         welcomeMsg = String.Concat(welcomeMsg, "to ", comp.Name);
+    }
+    
 
     
     if (TempData["CompanyMsg"] != null)  {
@@ -141,7 +148,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - MKsEMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @currentYear - @compName - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
