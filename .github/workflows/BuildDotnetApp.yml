@@ -28,5 +28,5 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
+    - name: Test ./EMSTestProject
       run: dotnet test --no-build --verbosity normal
