@@ -31,7 +31,7 @@ jobs:
         run: cd ..
         
       - name: Test 
-        run: dotnet test ./MKsEMSOld/MKsEMSTestProject.csproj --no-build --verbosity normal
+        run: dotnet test ./MKsEMSTestProject.csproj --no-build --verbosity normal
         
       - name: dotnet publish
         run: dotnet publish ./MKsEMS.csproj --configuration Release --no-restore
