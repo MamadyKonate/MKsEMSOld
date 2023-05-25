@@ -22,8 +22,8 @@ jobs:
           dotnet-version: '7.0.x'
       - name: restore
         
-        run: dotnet restore ./MKsEMS/MKsEMS.csproj
-
+        run: dotnet restore ./MKsEMS.csproj      
+      
       - name: Build with dotnet
         run: dotnet build ./MKsEMS.sln --configuration Release --no-restore
 
