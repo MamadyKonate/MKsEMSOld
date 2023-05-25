@@ -28,7 +28,7 @@ jobs:
         run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
        
       - name: Test 
-        run: dotnet test ./MKsEMSTestProject.csproj --no-build --verbosity normal
+        run: dotnet test ./MKsEMSOld/MKsEMSOld/MKsEMSTestProject.csproj --no-build --verbosity normal
         
       - name: dotnet publish
         run: dotnet publish ./MKsEMS.csproj --configuration Release --no-restore
