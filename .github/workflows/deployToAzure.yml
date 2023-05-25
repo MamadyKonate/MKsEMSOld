@@ -29,6 +29,7 @@ jobs:
       
       - name: Set working directory
         run: cd ..
+        working-directory: ./MKsEMSTestProject
         
       - name: Test 
         run: dotnet test ./MKsEMSTestProject.csproj --no-build --verbosity normal
