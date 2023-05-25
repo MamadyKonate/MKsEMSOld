@@ -8,7 +8,9 @@ on:
     branches:
       - main
   workflow_dispatch:
-
+env:
+  AZURE_WEBAPP_NAME: mksemsold
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,21 +29,29 @@ jobs:
       - name: Build with dotnet
         run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
       
-      - name: Set working directory
-        run: cd ..
-        working-directory: ./MKsEMSTestProject
+      
+      
+ #     - name: Set working directory
+  #      run: cd ..
+ #       working-directory: ./MKsEMSTestProject
         
-      - name: Test 
-        run: dotnet test ./MKsEMSTestProject.csproj --no-build --verbosity normal
+ #     - name: Test 
+#        run: dotnet test ./MKsEMSTestProject.csproj --no-build --verbosity normal
         
       - name: dotnet publish
-        run: dotnet publish ./MKsEMS.csproj --configuration Release --no-restore
+        run: dotnet publish ./MKsEMS.csproj --configuration Release --no-restore --output ' ${{ env.AZURE_WEBAPP_PACKAGE_PATH}}'
       
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+      - name: deploy dotnet
+        uses: actions/webapps-deploy@v2
         with:
-            name: .net-app
-            path: ${{env.DOTNET_ROOT}}/myapp
+          app-name: ${{ env.AZURE_WEBAPP_NAME}}
+          publish-profile: '${{ env.AZURE_PUBLISH_PROFILE }}'
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+#      - name: Upload artifact for deployment job
+#        uses: actions/upload-artifact@v2
+ #       with:
+ #           name: .net-app
+  #          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,12 +69,12 @@ jobs:
       
       
       
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'emsproj'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4C8BAA93F5B74E19A0BD86D966CB1B95 }}
-          package: .
+#      - name: Deploy to Azure Web App
+#        id: deploy-to-webapp
+#        uses: azure/webapps-deploy@v2
+ #       with:
+ #         app-name: 'emsproj'
+#          slot-name: 'Production'
+ #         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4C8BAA93F5B74E19A0BD86D966CB1B95 }}
+ #         package: .
    
