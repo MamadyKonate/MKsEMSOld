@@ -25,9 +25,9 @@ jobs:
         run: dotnet restore ./MKsEMS.csproj      
       
       - name: Build with dotnet
-        run: dotnet build ./MKsEMS.sln --configuration Release --no-restore
+        run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish ./MKsEMS.sln --configuration Release --no-restore
+        run: dotnet publish ./MKsEMS.csproj --configuration Release --no-restore
 
    
