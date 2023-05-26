@@ -35,8 +35,7 @@ jobs:
       run: dotnet restore ./MKsEMS.csproj         
     - name: Build
       run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
-        
-    
+            
     # Build and test have completed successfully
 
   # Define a deploy to development environment job
@@ -44,7 +43,7 @@ jobs:
     name: Deploy to Development
     # Job runs only if the event is a pull request
     if: github.event_name == 'pull_request'
-    # The job needs the build job to pass first
+    # The job needs the build job to succeed first
     needs: [ Build ]
     runs-on: ubuntu-latest
     # Define some environment variables
