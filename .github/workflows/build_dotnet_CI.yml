@@ -41,7 +41,7 @@ jobs:
     
  #publishing the project
     - name: publish
-      run: dotnet publish ./EMSProject.csproj --configuration Release --no-build --no-restore --output ./publish
+      run: dotnet publish ./MKsEMS.csproj --configuration Release --no-build --no-restore --output ./publish
 
       #deploying the project
     - name: Deploy to Azure Web App
