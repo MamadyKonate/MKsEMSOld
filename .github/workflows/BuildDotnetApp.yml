@@ -25,8 +25,8 @@ jobs:
         dotnet-version:  ${{ matrix.dotnet-version }}
     - name: Restore project dependencies
       # restores the project depedencies and tools
-      run: dotnet restore
+      run: dotnet restore ./MKsEMS.csproj
     - name: Build
       run: dotnet build --no-restore
     - name: Test ./EMSTestProject
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ./EMSTestProject --no-build --verbosity normal
