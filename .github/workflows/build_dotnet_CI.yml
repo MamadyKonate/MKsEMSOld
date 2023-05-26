@@ -10,8 +10,8 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-  env:
-    AZURE_WEBAPP_NAME: MKsEMS
+env:
+    AZURE_WEBAPP_NAME: mksemsold
     AZURE_WEBAPP_PACKAGE_PATH: './publish'
     DOTNET_VERSION: '7.0.x'   
      
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '6.0.x', '7.0.x']
+        dotnet-version: ['7.0.x']
     
     steps:
     - uses: actions/checkout@v3
@@ -32,26 +32,38 @@ jobs:
       with:
         dotnet-version:  ${{ matrix.dotnet-version }}       
     - name: Restore project dependencies
-       run: dotnet restore ./MKsEMS.csproj         
+      run: dotnet restore ./MKsEMS.csproj         
     - name: Build
-      run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
-        
-    
+      run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore    
+      
     # Build and test have completed successfully
+    
+    
+ #publishing the project
+    - name: publish
+      run: dotnet publish ./MKsEMS.csproj --configuration Release --no-build --no-restore --output ./publish
+
+      #deploying the project
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:          
+          app-name: ${{ env.AZURE_WEBAPP_NAME}} 
+          publish-profile: ${{ secrets.EMS_APP_PUBLISH }}
+          package: ./publish
 
   # Define a deploy to development environment job
   DeployDev:
     name: Deploy to Development
     # Job runs only if the event is a pull request
     if: github.event_name == 'pull_request'
-    # The job needs the build job to pass first
+    # The job needs the build job to succeed first
     needs: [ Build ]
     runs-on: ubuntu-latest
     # Define some environment variables
     environment: 
       # The environment name must match the envrionment name in the repository
-      name: development
-      echo env: ${{env.development}}
+     name: Development
+     # echo env ${{env.development}}'
     steps:
       - name: Deploy
         run: echo Your code is being deployed to http//dev/myapp.com
