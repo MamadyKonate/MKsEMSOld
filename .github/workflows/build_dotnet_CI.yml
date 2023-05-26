@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-    AZURE_WEBAPP_NAME: MKsEMSOld
+    AZURE_WEBAPP_NAME: mksemsold
     AZURE_WEBAPP_PACKAGE_PATH: './publish'
     DOTNET_VERSION: '7.0.x'   
      
