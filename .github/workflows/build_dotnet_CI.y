@@ -1,6 +1,6 @@
 # This workflow demonstrates how you can use various environments (development, staging, production) in github.
 
-name: CI/CD pipeline
+name: Deploy build and deploy to Azure through CI/CD pipeline
 
 # Define when the workflow should run. On a push to main, a PR to main or manually with worfkow_dispatch
 on: 
@@ -10,6 +10,12 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+    AZURE_WEBAPP_NAME: MKsEMS
+    AZURE_WEBAPP_PACKAGE_PATH: './publish'
+    DOTNET_VERSION: '7.0.x'   
+
+     
 # Define some jobs that should run
 
 jobs:
@@ -27,7 +33,10 @@ jobs:
       with:
         dotnet-version:  ${{ matrix.dotnet-version }}       
     - name: Restore project dependencies
-    
+       run: dotnet restore ./MKsEMS.csproj         
+    - name: Build
+      run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
+        
     
     # Build and test have completed successfully
 
@@ -42,8 +51,8 @@ jobs:
     # Define some environment variables
     environment: 
       # The environment name must match the envrionment name in the repository
-      name: Development
-      url: 'http//dev/myapp.com'
+      name: development
+      echo env: ${{env.development}}
     steps:
       - name: Deploy
         run: echo Your code is being deployed to http//dev/myapp.com
@@ -53,10 +62,10 @@ jobs:
     name: Deploy to Staging
     # deploy to staging only if we are committing to main
     if: github.event.ref == 'refs/heads/main'
-    needs: [ Build ]
+    needs: [ DeployDev ]
     runs-on: ubuntu-latest
     environment:
-      name: Staging
+      name: Deploy to Staging
       url: 'http://test.myapp.com'
     steps:
     - name: Deploy
