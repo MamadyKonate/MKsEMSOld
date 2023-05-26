@@ -10,7 +10,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-  env:
+env:
     AZURE_WEBAPP_NAME: MKsEMS
     AZURE_WEBAPP_PACKAGE_PATH: './publish'
     DOTNET_VERSION: '7.0.x'   
@@ -33,7 +33,7 @@ jobs:
       with:
         dotnet-version:  ${{ matrix.dotnet-version }}       
     - name: Restore project dependencies
-       run: dotnet restore ./MKsEMS.csproj         
+      run: dotnet restore ./MKsEMS.csproj         
     - name: Build
       run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
         
@@ -52,7 +52,7 @@ jobs:
     environment: 
       # The environment name must match the envrionment name in the repository
       name: development
-      echo env: ${{env.development}}
+       echo ${{env.Development}}
     steps:
       - name: Deploy
         run: echo Your code is being deployed to http//dev/myapp.com
@@ -82,3 +82,16 @@ jobs:
     steps:
       - name: Deploy
         run: echo I am deploying to production
+    #publishing the project
+      
+      - name: publish
+        run: dotnet publish ./EMSProject.csproj --configuration Release --no-build --no-restore --output ./publish
+
+        #deploying the project
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:          
+            app-name: ${{ env.AZURE_WEBAPP_NAME}} 
+            publish-profile: ${{ secrets.EMS_APP_PUBLISH }}
+            package: ./publish
+            
