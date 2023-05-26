@@ -50,7 +50,7 @@ jobs:
     environment: 
       # The environment name must match the envrionment name in the repository
      name: Development
-       echo env ${{env.development}}'
+     # echo env ${{env.development}}'
     steps:
       - name: Deploy
         run: echo Your code is being deployed to http//dev/myapp.com
