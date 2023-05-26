@@ -14,7 +14,6 @@ on:
     AZURE_WEBAPP_NAME: MKsEMS
     AZURE_WEBAPP_PACKAGE_PATH: './publish'
     DOTNET_VERSION: '7.0.x'   
-
      
 # Define some jobs that should run
 
