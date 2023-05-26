@@ -34,9 +34,22 @@ jobs:
     - name: Restore project dependencies
       run: dotnet restore ./MKsEMS.csproj         
     - name: Build
-      run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore
-            
+      run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore    
+      
     # Build and test have completed successfully
+    
+    
+ #publishing the project
+    - name: publish
+      run: dotnet publish ./EMSProject.csproj --configuration Release --no-build --no-restore --output ./publish
+
+      #deploying the project
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:          
+          app-name: ${{ env.AZURE_WEBAPP_NAME}} 
+          publish-profile: ${{ secrets.EMS_APP_PUBLISH }}
+          package: ./publish
 
   # Define a deploy to development environment job
   DeployDev:
