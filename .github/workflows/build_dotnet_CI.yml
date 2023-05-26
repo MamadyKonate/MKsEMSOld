@@ -51,7 +51,7 @@ jobs:
     # Define some environment variables
     environment: 
       # The environment name must match the envrionment name in the repository
-      name: development
+     name: Development
        echo env ${{env.development}}'
     steps:
       - name: Deploy
