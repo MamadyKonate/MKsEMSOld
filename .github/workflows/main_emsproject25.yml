@@ -8,8 +8,7 @@ on:
     branches:
       - main
   workflow_dispatch:
-env: 
-  AZURE_WEBAPP_PACKAGE_PATH: './publish'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,4 +54,4 @@ jobs:
           app-name: 'emsproject25'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CD13D1B15DB8422CA643C9A7533442E3 }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: .
