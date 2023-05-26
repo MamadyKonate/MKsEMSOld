@@ -39,10 +39,22 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_LOGIN }}
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:          
           app-name: ${{ env.AZURE_WEBAPP_NAME }} 
           publish-profile: ${{ secrets.EMS_APP_PUBLISH }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+
+
