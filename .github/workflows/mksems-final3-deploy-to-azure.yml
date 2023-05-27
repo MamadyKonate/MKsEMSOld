@@ -59,7 +59,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.MKSEMS_FINAL3_AZURE_SECRETE }}
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
