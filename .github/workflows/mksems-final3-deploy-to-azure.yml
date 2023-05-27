@@ -32,13 +32,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ./MKsEMS.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./MKsEMS.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+#      - name: Build test projects
+#        run: dotnet build ./MKsEMS.csproj --configuration Release --no-restore --verbosity normal 
 
-      - name: Build test projects
-        run: dotnet build --configuration Release --no-restore --verbosity normal      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
