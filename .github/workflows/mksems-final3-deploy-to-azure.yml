@@ -1,3 +1,4 @@
+
 name: Build, Test, and Deploy to Azure
 
 env:
@@ -19,12 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      #LOGIN TO AZURE - NEED TO RELOOK AT THIS SECRETE TO ENSURE IT'S NEEDED
-      - name: Login to AZ
-        uses: azure/login@v1
-        with:
-          creds: ${{secretes.MKSEMS_AZURE_SECRET}}
-          
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
         with:
