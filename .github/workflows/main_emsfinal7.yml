@@ -29,7 +29,7 @@ jobs:
         run: dotnet publish ./MKsEMS.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
         
       - name: Test with dotnet
-        run: dotnet test ./EMSTestProject.csproj --configuration Release
+        run: dotnet test ./MKsEMSOld/EMSTestProject/EMSTestProject.csproj 
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
